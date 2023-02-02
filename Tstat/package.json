@@ -1,0 +1,19 @@
+{
+  "name": "tstat",
+  "version": "0.0.1",
+  "description": "tstat controller",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Judson Hartley",
+  "license": "ISC",
+  "dependencies": {
+    "@jahartley/ds2482": "^0.2.0",
+    "@jahartley/ds2482-temperature": "^0.1.0",
+    "bme280-sensor": "^0.1.7",
+    "i2c-bus": "^5.1.0",
+    "mqtt": "^4.3.7"
+  }
+}
