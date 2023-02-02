@@ -57,14 +57,14 @@ Bme.prototype.resend = function() {
     client.publish(`home/hvac/${this.name}/humidity`, this.humidity.toString());
 }
 
-function Ds18B20(rate) {
+function DsTs(rate) {
     this.rate = rate;
     this.sense = new DS18B20();
     this.currentSensors = [];
     this.dataStore = {};
 }
 
-DS18B20.prototype.read() = async function() {
+DsTs.prototype.read() = async function() {
     try {
         let data = await this.sense.readTemperatures();
         for (i = 0; i < data.length; i++) {
@@ -81,7 +81,7 @@ DS18B20.prototype.read() = async function() {
     this.publish();
 }
 
-DS18B20.prototype.publish = function() {
+DsTs.prototype.publish = function() {
     for (i = 0; i < this.currentSensors.length; i++) {
         if (this.dataStore?.[this.currentSensors[i]] === undefined) continue;
         let { temperature, temperatureOld} = this.dataStore[this.currentSensors[i]];
@@ -92,7 +92,7 @@ DS18B20.prototype.publish = function() {
     }
 }
 
-DS18B20.prototype.resend = function() {
+DsTs.prototype.resend = function() {
     for (i = 0; i < this.currentSensors.length; i++) {
         if (this.dataStore?.[this.currentSensors[i]] === undefined) continue;
         let { temperature } = this.dataStore[this.currentSensors[i]];
@@ -101,4 +101,4 @@ DS18B20.prototype.resend = function() {
     }
 }
 
-module.exports = Bme, Ds18B20;
+module.exports = Bme, DsTs;

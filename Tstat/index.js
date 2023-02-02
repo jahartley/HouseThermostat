@@ -15,7 +15,7 @@
 
 const Machine = require("./machine.js");
 const {client} = require("./global.js");
-const {Bme, DS18B20} = require("./sensor.js");
+const {Bme, DsTs} = require("./sensor.js");
 
 const options0 = {
     i2cBusNo   : 1, // defaults to 1
@@ -33,7 +33,7 @@ const second = new Bme(options1, "Downstream", 10000);
 const sensors = {};
 sensors[0] = new Bme(options0, "Upstream", 10000);
 sensors[1] = new Bme(options1, "Downstream", 10000);
-sensors[2] = new DS18B20(10000);
+sensors[2] = new DsTs(10000);
 
 
 client.on('connect', () => {

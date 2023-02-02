@@ -1,4 +1,4 @@
-const onPi = false;
+const onPi = true;
 const Gpio = null;
 const devOn = 1;
 const devOff = 0;
