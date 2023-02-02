@@ -14,6 +14,7 @@
     "@jahartley/ds2482-temperature": "^0.1.0",
     "bme280-sensor": "^0.1.7",
     "i2c-bus": "^5.1.0",
-    "mqtt": "^4.3.7"
+    "mqtt": "^4.3.7",
+    "onoff": "^6.0.3"
   }
 }
