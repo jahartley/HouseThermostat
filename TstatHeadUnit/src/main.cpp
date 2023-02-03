@@ -22,6 +22,9 @@ int bmeTempInt = -150;
 int bmeTempDec = 0;
 int humidInt = -150;
 int humidDec = 0;
+unsigned long tempP = 0;
+unsigned long pressInt = 0;
+int pressDec = 0;
 unsigned long gas = 0;
 
 OneWire oneWire(ONE_WIRE_BUS);
@@ -57,6 +60,7 @@ void loop() {
     if (bme.endReading()) {
       float tempC = bme.temperature;
       float tempH = bme.humidity;
+      tempP = bme.pressure;
       gas = bme.gas_resistance;
       float tempF = tempC*1.8+32;
       bmeTempInt = tempF;
@@ -94,6 +98,8 @@ void handleScreenRefresh() {
   Serial.println(humidDec);
   Serial.print('g');
   Serial.println(gas);
+  Serial.print("p");
+  Serial.println(tempP);
   Serial.print("Time ");
   Serial.print(clock1.getHour());
   Serial.print(':');

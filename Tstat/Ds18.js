@@ -6,15 +6,15 @@ function DsTs(rate) {
     this.sense = new DS18B20();
     this.currentSensors = [];
     this.dataStore = {};
-    this.sense.init().then(async () => {
-        setInterval(async () => {this.read()} ,this.rate);
+    this.sense.init().then(this.sense.search()).then(() => {
+        setInterval(async () => {await this.read()}, this.rate);
     }).catch(console.error);
 }
 
 DsTs.prototype.read = async function() {
     try {
         let data = await this.sense.readTemperatures();
-	console.log(data);
+	    console.log(data);
         for (i = 0; i < data.length; i++) {
             if (this.dataStore?.[data[i].rom] === undefined) {
                 this.currentSensors.push(data[i].rom);
@@ -26,7 +26,7 @@ DsTs.prototype.read = async function() {
             this.dataStore[data[i].rom].temperature = (data[i].value*1.8+32).toFixed(2);
         }
     } catch (err) { console.error(err); }
-    this.publish();
+    return this.publish();
 }
 
 DsTs.prototype.publish = function() {

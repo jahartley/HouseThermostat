@@ -26,6 +26,7 @@ t send temp
 b send bme humidity
 g send bme gas resistance
 y send bme temp
+p send bme press
 h setpoint heat 'h'
 c setpoint cold 'c'
 u setpoint humidty 'u'
