@@ -26,11 +26,11 @@ Bme.prototype.read = async function() {
         let data = await this.bmeObj.readSensorData();
 	console.log(data);
         this.temperature = parseFloat(data.temperature_C)*1.8+32+this.temperatureCorrection;
-        this.temperature = this.temperature.toFixed(2);
+        this.temperature = this.temperature.toFixed(3);
         this.pressure = parseFloat(data.pressure_hPa) + this.pressureCorrection;
         this.pressure = this.pressure.toFixed(3);
         this.humidity = parseFloat(data.humidity) + this.humidityCorrection;
-        this.humidity = this.humidity.toFixed(1);
+        this.humidity = this.humidity.toFixed(3);
     } catch (err) { console.error(err); }
     this.publish();
 }
