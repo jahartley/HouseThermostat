@@ -15,7 +15,8 @@
 
 const Machine = require("./machine.js");
 const {client} = require("./global.js");
-const {Bme, DsTs} = require("./sensor.js");
+const Bme = require("./sensor.js");
+const DsTs = require("./sensor.js");
 
 const options0 = {
     i2cBusNo   : 1, // defaults to 1
