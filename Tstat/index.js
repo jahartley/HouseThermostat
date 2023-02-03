@@ -33,7 +33,7 @@ const options1 = {
 
 const sensors = {};
 sensors[0] = new Bme(options1, "Upstream", 10000);
-sensors[1] = new Bme(options0, "Downstream", 11000);
+sensors[1] = new Bme(options0, "Downstream", 11000,0,1.52,0);
 sensors[2] = new DsTs(12000);
 
 
