@@ -64,7 +64,7 @@ function DsTs(rate) {
     this.dataStore = {};
 }
 
-DsTs.prototype.read() = async function() {
+DsTs.prototype.read = async function() {
     try {
         let data = await this.sense.readTemperatures();
         for (i = 0; i < data.length; i++) {
