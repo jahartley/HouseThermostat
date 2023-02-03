@@ -28,8 +28,8 @@ const options1 = {
 };
 
 
-const first = new Bme(options0, "Upstream", 10000);
-const second = new Bme(options1, "Downstream", 10000);
+//const first = new Bme(options0, "Upstream", 10000);
+//const second = new Bme(options1, "Downstream", 10000);
 
 const sensors = {};
 sensors[0] = new Bme(options0, "Upstream", 10000);
