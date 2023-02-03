@@ -56,9 +56,9 @@ setInterval(() => {
 }, 300000);
 
 let lotsOfMachines = {};
-lotsOfMachines[0] = new Machine(10000, 1, "Fan ONE");
-lotsOfMachines[1] = new Machine(10000, 1, "Heat ONE");
-lotsOfMachines[2] = new Machine(10000, 1, "Cool ONE");
+lotsOfMachines[0] = new Machine(10000, 0, "Fan ONE");
+lotsOfMachines[1] = new Machine(10000, 2, "Heat ONE");
+lotsOfMachines[2] = new Machine(10000, 3, "Cool ONE");
 
 console.log(lotsOfMachines[0].state);
 setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 7000);
