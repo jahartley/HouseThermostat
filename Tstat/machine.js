@@ -2,7 +2,7 @@
 const devOn = 1;
 const devOff = 0;
 
-Gpio = require('onoff').Gpio;
+//Gpio = require('onoff').Gpio;
 const {client} = require("./global.js");
 
 
@@ -39,7 +39,7 @@ function Machine(delay, pin, name, rate = 1000) {
             }
         }
     };
-    this.gpio = new Gpio(this.pin, 'out');
+    //this.gpio = new Gpio(this.pin, 'out');
     setInterval(() => {this.poll()}, rate);
 }
 
@@ -48,7 +48,7 @@ Machine.prototype.delayCheck = function() {
     console.log(`${this.name} delay check`);
     if (Date.now() - this.lastOffTime < this.delayTime) return 0;
     console.log(`${this.name} starting fan`);
-    this.gpio.writeSync(devOn);
+    //this.gpio.writeSync(devOn);
     return 1;
 }
 
@@ -57,7 +57,7 @@ Machine.prototype.stop = function() {
     console.log(`${this.name} stop`);
     this.lastOffTime = Date.now();
     //stop function.
-    this.gpio.writeSync(devOff);
+    //this.gpio.writeSync(devOff);
     return 1;
 }
 

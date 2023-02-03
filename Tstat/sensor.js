@@ -67,6 +67,7 @@ function DsTs(rate) {
 DsTs.prototype.read = async function() {
     try {
         let data = await this.sense.readTemperatures();
+	console.log(data);
         for (i = 0; i < data.length; i++) {
             if (this.dataStore?.[data[i].rom] === undefined) {
                 this.currentSensors.push(data[i].rom);

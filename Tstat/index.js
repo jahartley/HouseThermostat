@@ -32,9 +32,9 @@ const options1 = {
 //const second = new Bme(options1, "Downstream", 10000);
 
 const sensors = {};
-sensors[0] = new Bme(options0, "Upstream", 10000);
-sensors[1] = new Bme(options1, "Downstream", 10000);
-sensors[2] = new DsTs(10000);
+sensors[0] = new Bme(options1, "Upstream", 10000);
+sensors[1] = new Bme(options0, "Downstream", 11000);
+sensors[2] = new DsTs(12000);
 
 
 client.on('connect', () => {
