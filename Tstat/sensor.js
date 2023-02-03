@@ -102,4 +102,5 @@ DsTs.prototype.resend = function() {
     }
 }
 
-module.exports = Bme, DsTs;
+module.exports = Bme;
+module.exports = DsTs;
