@@ -63,7 +63,7 @@ Machine.prototype.stop = function() {
 
 Machine.prototype.poll = function() {
     // attempt to transition.
-    console.log(`${this.name} poll state:${this.state}, request:${this.request}`);
+    //console.log(`${this.name} poll state:${this.state}, request:${this.request}`);
     if (this.lastOffTime == 48309836520000) this.lastOffTime = Date.now();
     //logic
     let action = this.states?.[this.state]?.[this.request]?.action
