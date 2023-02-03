@@ -24,6 +24,7 @@ function Bme(opts, name, rate, tempCorrection = 0, pressureCorrection = 0, humid
 Bme.prototype.read = async function() {
     try {
         let data = await this.bmeObj.readSensorData();
+	console.log(data);
         this.temperature = parseFloat(data.temperature_C)*1.8+32+this.temperatureCorrection;
         this.temperature = this.temperature.toFixed(2);
         this.pressure = parseFloat(data.pressure_hPa) + this.pressureCorrection;
