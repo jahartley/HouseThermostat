@@ -41,7 +41,7 @@ parser.on('data', (data) => {
     //console.log(`to string: ${data.toString()}`);
     let newData = data.toString();
     let header = newData.slice(0,1);
-    console.log(newData);
+    //console.log(newData);
     /* 
         t70.25
         y70.1
@@ -67,10 +67,16 @@ parser.on('data', (data) => {
             break;
         case 'p':
             remoteBmePressure = parseFloat(newData.slice(1,newData.length-1))/10;
+            console.log(`Remote pressure: ${remoteBmePressure}`);
             break;
         case 'T':
             let timeString = newData.slice(5, newData.length-1);
-            console.log(timeString);
+            let timeString2 = timeString.split(':');
+            if (timeString2.length != 3) break;
+            remoteHour = timeString2[0];
+            remomteMinute = timeString2[1];
+            remoteSecond = timeString2[2];
+            console.log(`time: ${remoteHour} ${remomteMinute} ${remoteSecond}`);
     }
 });
 
