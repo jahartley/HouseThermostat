@@ -1,6 +1,6 @@
 
-const deviceOn = 1;
-const deviceOff = 0;
+const deviceOn = 0;
+const deviceOff = 1;
 
 
 const Gpio = require('pigpio').Gpio;
