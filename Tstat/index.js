@@ -38,8 +38,10 @@ parser.on('data', (data) => {
     console.log(data);
     console.log(`to string: ${data.toString()}`);
     let header = Buffer.alloc(1);
-    header.copy(data,0,0,0);
+    let data2 = Buffer.alloc(data.length);
+    header.copy(data,0,0,1);
     console.log(header.toString());
+    console.log(data);
 
 });
 
