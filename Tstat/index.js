@@ -40,8 +40,38 @@ parser.on('data', (data) => {
     //console.log(data);
     //console.log(`to string: ${data.toString()}`);
     let newData = data.toString();
+    let header = newData.slice(0,1);
     console.log(newData);
+    /* 
+        t70.25
+        y70.1
+        b35.3
+        g653643
+        p96159
+        Time 0:52:36
 
+    */
+    switch(header) {
+        case t:
+            remoteTemperature = parseFloat(newData.slice(1,newData.length-1));
+            console.log(remoteTemperature);
+            break;
+        case y:
+            remoteBmeTemperature = parseFloat(newData.slice(1,newData.length-1));
+            break;
+        case b:
+            remoteBmeHumidity = parseFloat(newData.slice(1,newData.length-1));
+            break;
+        case g:
+            remoteBmeAq = parseFloat(newData.slice(1,newData.length-1));
+            break;
+        case p:
+            remoteBmePressure = parseFloat(newData.slice(1,newData.length-1))/10;
+            break;
+        case T:
+            let timeString = newData.slice(5, newData.length-1);
+            console.log(timeString);
+    }
 });
 
 const options0 = {
