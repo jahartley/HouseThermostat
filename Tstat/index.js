@@ -13,6 +13,17 @@
         Make Setpoints...
 */
 
+
+
+let remoteTemperature = -150;
+let remoteBmeTemperature = -150
+let remoteBmeHumidity = -150;
+let remoteBmePressure = -150;
+let remoteBmeAq = -1;
+let remoteHour = -1;
+let remomteMinute = -1;
+let remoteSecond = -1;
+
 const Machine = require("./machine.js");
 const {client} = require("./global.js");
 const Bme = require("./Bme.js");
