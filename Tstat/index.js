@@ -23,7 +23,9 @@ const { DelimiterParser } = require('@serialport/parser-delimiter');
 const port = new SerialPort({ path: '/dev/serial0', baudRate: 9600});
 const parser = port.pipe(new DelimiterParser({ delimiter: '\n' }));
 
-parser.on('data', console.log);
+parser.on('data', (data) => {
+    console.log(data.toString());
+});
 
 const options0 = {
     i2cBusNo   : 1, // defaults to 1
