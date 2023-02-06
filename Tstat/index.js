@@ -12,7 +12,9 @@
         Make Schedules...
         Make Setpoints...
 */
-
+process.on('uncaughtException', function(err) {
+    console.log('Caught exception: ' + err);
+});
 
 
 let remoteTemperature = -150;
@@ -41,8 +43,8 @@ parser.on('data', (data) => {
     let data2 = Buffer.alloc(data.length);
     header.copy(data,0,0,1);
     data2.copy(data,0,1,(data.length-1));
-    console.log(`header: ${header}`);
-    console.log(`data: ${parseFloat(data2.toString())}`);
+    console.log(header);
+    console.log(data2);
 
 });
 
