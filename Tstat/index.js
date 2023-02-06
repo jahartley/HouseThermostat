@@ -18,6 +18,13 @@ const {client} = require("./global.js");
 const Bme = require("./Bme.js");
 const DsTs = require("./Ds18.js");
 
+const { SerialPort } = require('serialport');
+const { DelimiterParser } = require('@serialport/parser-delimiter');
+const port = new SerialPort({ path: '/dev/serial0', baudRate: 9600});
+const parser = port.pipe(new DelimiterParser({ delimiter: '\n' }));
+
+parser.on('data', console.log);
+
 const options0 = {
     i2cBusNo   : 1, // defaults to 1
     i2cAddress : 0x76 // defaults to 0x77
