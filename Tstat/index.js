@@ -52,23 +52,23 @@ parser.on('data', (data) => {
 
     */
     switch(header) {
-        case t:
+        case 't':
             remoteTemperature = parseFloat(newData.slice(1,newData.length-1));
             console.log(remoteTemperature);
             break;
-        case y:
+        case 'y':
             remoteBmeTemperature = parseFloat(newData.slice(1,newData.length-1));
             break;
-        case b:
+        case 'b':
             remoteBmeHumidity = parseFloat(newData.slice(1,newData.length-1));
             break;
-        case g:
+        case 'g':
             remoteBmeAq = parseFloat(newData.slice(1,newData.length-1));
             break;
-        case p:
+        case 'p':
             remoteBmePressure = parseFloat(newData.slice(1,newData.length-1))/10;
             break;
-        case T:
+        case 'T':
             let timeString = newData.slice(5, newData.length-1);
             console.log(timeString);
     }
