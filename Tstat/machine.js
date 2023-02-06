@@ -41,6 +41,7 @@ function Machine(delay, pin, name, rate = 1000) {
         }
     };
     this.gpio = new Gpio(this.pin, {mode: Gpio.OUTPUT});
+    this.gpio.digitalWrite(deviceOff);
     setInterval(() => {this.poll()}, rate);
 }
 
