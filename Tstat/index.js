@@ -66,14 +66,16 @@ parser.on('data', (data) => {
             remoteBmeAq = parseFloat(newData.slice(1,newData.length-1));
             break;
         case 'p':
-            remoteBmePressure = parseFloat(newData.slice(1,newData.length-1))/10;
+            remoteBmePressure = parseFloat(newData.slice(1,newData.length-1))/100;
             console.log(`Remote pressure: ${remoteBmePressure}`);
             break;
         case 'T':
             let timeString = newData.slice(5, newData.length-1);
             let timeString2 = timeString.split(':');
             if (timeString2.length != 3) break;
+            let date2 = new Date(Date.now());
             remoteHour = timeString2[0];
+            if (remoteHour != date2.getHours()) port.write(`o${date2.getHours()}\r\n`);
             remomteMinute = timeString2[1];
             remoteSecond = timeString2[2];
             console.log(`time: ${remoteHour} ${remomteMinute} ${remoteSecond}`);
