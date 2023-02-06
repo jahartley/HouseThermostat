@@ -1,8 +1,8 @@
 
-const devOn = 1;
-const devOff = 0;
+const deviceOn = 1;
+const deviceOff = 0;
 
-//Gpio = require('onoff').Gpio;
+let Gpio = require("rpi-gpio");
 const {client} = require("./global.js");
 
 
@@ -39,7 +39,7 @@ function Machine(delay, pin, name, rate = 1000) {
             }
         }
     };
-    //this.gpio = new Gpio(this.pin, 'out');
+    Gpio.setup(this.pin, Gpio.DIR_OUT);
     setInterval(() => {this.poll()}, rate);
 }
 
@@ -48,7 +48,7 @@ Machine.prototype.delayCheck = function() {
     console.log(`${this.name} delay check`);
     if (Date.now() - this.lastOffTime < this.delayTime) return 0;
     console.log(`${this.name} starting fan`);
-    //this.gpio.writeSync(devOn);
+    Gpio.write(this.pin, deviceOn);
     return 1;
 }
 
@@ -57,7 +57,7 @@ Machine.prototype.stop = function() {
     console.log(`${this.name} stop`);
     this.lastOffTime = Date.now();
     //stop function.
-    //this.gpio.writeSync(devOff);
+    Gpio.write(this.pin, deviceOff);
     return 1;
 }
 
