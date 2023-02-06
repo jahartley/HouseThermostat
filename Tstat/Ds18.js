@@ -33,7 +33,7 @@ DsTs.prototype.publish = function() {
     for (i = 0; i < this.currentSensors.length; i++) {
         if (this.dataStore?.[this.currentSensors[i]] === undefined) continue;
         let { temperature, temperatureOld} = this.dataStore[this.currentSensors[i]];
-        if ((temperature - temperatureOld) > 0.2 || (temperature - temperatureOld) < -0.2 ) {
+        if (Math.abs(temperature - temperatureOld) > 0.2) {
             client.publish(`home/hvac/DS18B20/${this.currentSensors[i]}/temperature`, temperature.toString());
             temperatureOld = temperature;
         }

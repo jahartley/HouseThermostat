@@ -43,15 +43,15 @@ Bme.prototype.read = async function() {
 }
 
 Bme.prototype.publish = function() {
-    if ((this.temperature - this.temperatureOld) > 0.2 || (this.temperature - this.temperatureOld) < -0.2 ) {
+    if (Math.abs(this.temperature - this.temperatureOld) > 0.2) {
         client.publish(`home/hvac/${this.name}/temperature`, this.temperature.toString());
         this.temperatureOld = this.temperature;
     }
-    if ((this.pressure - this.pressureOld) > 0.2 || (this.pressure - this.pressureOld) < -0.2 ) {
+    if (Math.abs(this.pressure - this.pressureOld) > 0.1) {
         client.publish(`home/hvac/${this.name}/pressure`, this.pressure.toString());
         this.pressureOld = this.pressure;
     }
-    if ((this.humidity - this.humidityOld) > 0.5 || (this.humidity - this.humidityOld) < -0.5 ) {
+    if (Math.abs(this.humidity - this.humidityOld) > 0.5) {
         client.publish(`home/hvac/${this.name}/humidity`, this.humidity.toString());
         this.humidityOld = this.humidity;
     }
