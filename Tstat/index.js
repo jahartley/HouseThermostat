@@ -24,7 +24,7 @@ const port = new SerialPort({ path: '/dev/serial0', baudRate: 9600});
 const parser = port.pipe(new DelimiterParser({ delimiter: '\n' }));
 
 parser.on('data', (data) => {
-    console.log(data.toString());
+    console.log(`buffer recieved: ${data} to string: ${data.toString()}`);
 });
 
 const options0 = {
