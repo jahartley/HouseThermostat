@@ -2,7 +2,8 @@
 const deviceOn = 1;
 const deviceOff = 0;
 
-let Gpio = require("rpi-gpio");
+
+const Gpio = require('pigpio').Gpio;
 const {client} = require("./global.js");
 
 
@@ -39,7 +40,7 @@ function Machine(delay, pin, name, rate = 1000) {
             }
         }
     };
-    Gpio.setup(this.pin, Gpio.DIR_OUT);
+    this.gpio = new Gpio(this.pin, {mode: Gpio.OUTPUT});
     setInterval(() => {this.poll()}, rate);
 }
 
@@ -48,7 +49,7 @@ Machine.prototype.delayCheck = function() {
     console.log(`${this.name} delay check`);
     if (Date.now() - this.lastOffTime < this.delayTime) return 0;
     console.log(`${this.name} starting fan`);
-    Gpio.write(this.pin, deviceOn);
+    this.gpio.digitalWrite(deviceOn);
     return 1;
 }
 
@@ -57,7 +58,7 @@ Machine.prototype.stop = function() {
     console.log(`${this.name} stop`);
     this.lastOffTime = Date.now();
     //stop function.
-    Gpio.write(this.pin, deviceOff);
+    this.gpio.digitalWrite(deviceOff);
     return 1;
 }
 
