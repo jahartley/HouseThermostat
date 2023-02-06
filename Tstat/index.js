@@ -35,13 +35,14 @@ const port = new SerialPort({ path: '/dev/serial0', baudRate: 9600});
 const parser = port.pipe(new DelimiterParser({ delimiter: '\n' }));
 
 parser.on('data', (data) => {
-    console.log(data);
-    console.log(`to string: ${data.toString()}`);
+    //console.log(data);
+    //console.log(`to string: ${data.toString()}`);
     let header = Buffer.alloc(1);
     let data2 = Buffer.alloc(data.length);
     header.copy(data,0,0,1);
-    console.log(header.toString());
-    console.log(data);
+    data2.copy(data,0,1,(data.length-1));
+    console.log(`header: ${header}`);
+    console.log(`data: ${parseFloat(data2.toString())}`);
 
 });
 
