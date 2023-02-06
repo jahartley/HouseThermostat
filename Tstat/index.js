@@ -26,6 +26,10 @@ const parser = port.pipe(new DelimiterParser({ delimiter: '\n' }));
 parser.on('data', (data) => {
     console.log(data);
     console.log(`to string: ${data.toString()}`);
+    let header = Buffer.alloc(1);
+    header.copy(data,0,0,0);
+    console.log(header.toString());
+
 });
 
 const options0 = {
