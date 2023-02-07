@@ -1,5 +1,5 @@
 const {client} = require("./global.js");
-const DS18B20 = require('@jahartley/ds2482-temperature');
+const DS18B20 = require('ds2482-temperature');
 
 function DsTs(rate) {
     this.rate = rate;
