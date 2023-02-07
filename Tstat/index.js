@@ -79,7 +79,7 @@ parser.on('data', (data) => {
             remomteMinute = timeString2[1];
             if (remomteMinute != date2.getMinutes()) port.write(`m${date2.getMinutes()}\r\n`);
             remoteSecond = timeString2[2];
-            if (remomteMinute != date2.getSeconds()) port.write(`s${date2.getSeconds()}\r\n`);
+            if (remomteSecond != date2.getSeconds()) port.write(`s${date2.getSeconds()}\r\n`);
             console.log(`time: ${remoteHour} ${remomteMinute} ${remoteSecond}`);
     }
 });
