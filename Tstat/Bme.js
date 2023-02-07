@@ -16,14 +16,28 @@ function Bme(opts, name, rate, tempCorrection = 0, pressureCorrection = 0, humid
     this.pressure = 0;
     this.humidityOld = 0;
     this.humidity = 0;
-    this.bmeObj.init().then(async () => {
-        setInterval(async () => {this.read()} ,this.rate);
-    }).catch((err) => {
-        console.log(`Bme constructor ${this.name}`);
-        console.trace(err);
+    this.bmeObj.init().
+        then(async () => {
+            this.interval = setInterval(async () => {this.read()} ,this.rate);}).
+        catch((err) => {
+            this.errorHandler(err, "Constructor");
     });
     
 }
+
+Bme.prototype.errorHandler = async function(err, where = 'unknown') {
+    console.log(`Bme Error Handler ${this.name} fault at ${where}`); 
+    console.trace(err);
+    console.log(`Resetting Bme ${this.name}`);
+    try {
+        if (this.interval) clearInterval(this.interval);
+        await this.bmeObj.reset();
+        await this.bmeObj.init();
+        this.interval = setInterval(async () => {this.read()} ,this.rate);
+    } catch (err) {this.errorHandler(err, "ErrorHandler");}
+
+
+} 
 
 Bme.prototype.read = async function() {
     try {
@@ -41,7 +55,7 @@ Bme.prototype.read = async function() {
         this.humidity = parseFloat(data.humidity) + this.humidityCorrection;
         this.humidity = this.humidity.toFixed(3);
         if (Math.abs(this.humidity-this.humidityOld) > 20 && tdiff < 30000) this.humidity = this.humidityOld;
-    } catch (err) { console.log(`Bme read ${this.name}`); console.trace(err); }
+    } catch (err) { this.errorHandler(err, "read") }
     this.publish();
 }
 

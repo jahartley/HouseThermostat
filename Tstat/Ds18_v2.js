@@ -9,9 +9,21 @@ function DsTs(rate) {
     this.sense.init().
     then(() => {
         this.sense.on('data', val => { console.log(val); console.log('onData'); });
-        this.sense.on('error', err => { console.log('DsTs onError'); console.error(err); });
+        this.sense.on('error', err => { this.errorHandler(err, "onError");});
     }).
-    catch((err) => {console.trace(err); console.log("error at DsTs constructor");});
+    catch((err) => { this.errorHandler(err, "DsTs constructor");});
+}
+
+DsTs.prototype.errorHandler = async function(err, where = 'unknown') {
+    console.log(`DsTs Error Handler fault at ${where}`); 
+    console.trace(err);
+    console.log(`Resetting DsTs`);
+    try {
+        await this.sense.destroy();
+        await this.sense.init();
+        this.sense.on('data', val => { console.log(val); console.log('onData'); });
+        this.sense.on('error', err => { this.errorHandler(err, "onError");});
+    } catch (err) {this.errorHandler(err, "ErrorHandler");}
 }
 
 DsTs.prototype.read = async function() {
@@ -28,7 +40,7 @@ DsTs.prototype.read = async function() {
             }
             this.dataStore[data[i].rom].temperature = (data[i].value*1.8+32).toFixed(2);
         }
-    } catch (err) { console.trace(err); console.log("error at DsTs.read()");}
+    } catch (err) {this.errorHandler(err, "DsTs.read");}
     return this.publish();
 }
 
