@@ -8,7 +8,7 @@ function DsTs(rate) {
     this.dataStore = {};
     this.sense.init().
     then(() => {
-        this.sense.on('data', val => { console.log('onData ' + val); });
+        this.sense.on('data', val => { console.log(val); console.log('onData'); });
         this.sense.on('error', err => { console.log('onError'); console.error(err); });
     }).
     catch((err) => {console.error(err); console.log("error at DsTs constructor");});

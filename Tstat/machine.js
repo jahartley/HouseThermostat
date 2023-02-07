@@ -47,7 +47,7 @@ function Machine(delay, pin, name, rate = 1000) {
 
 Machine.prototype.delayCheck = function() {
     // check delay. transiton to on.
-    console.log(`${this.name} delay check`);
+    //console.log(`${this.name} delay check`);
     if (Date.now() - this.lastOffTime < this.delayTime) return 0;
     console.log(`${this.name} starting fan`);
     this.gpio.digitalWrite(deviceOn);

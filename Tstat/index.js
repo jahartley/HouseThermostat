@@ -13,7 +13,8 @@
         Make Setpoints...
 */
 process.on('uncaughtException', function(err) {
-    console.log('Caught exception: ' + err);
+    console.log('PROCESS ON ERROR CAUGHT');
+    console.trace(err);
 });
 
 
@@ -54,7 +55,7 @@ parser.on('data', (data) => {
     switch(header) {
         case 't':
             remoteTemperature = parseFloat(newData.slice(1,newData.length-1));
-            console.log(remoteTemperature);
+            //console.log(remoteTemperature);
             break;
         case 'y':
             remoteBmeTemperature = parseFloat(newData.slice(1,newData.length-1));
@@ -67,7 +68,7 @@ parser.on('data', (data) => {
             break;
         case 'p':
             remoteBmePressure = parseFloat(newData.slice(1,newData.length-1))/100;
-            console.log(`Remote pressure: ${remoteBmePressure}`);
+            //console.log(`Remote pressure: ${remoteBmePressure}`);
             break;
         case 'T':
             let timeString = newData.slice(5, newData.length-1);
@@ -80,7 +81,7 @@ parser.on('data', (data) => {
             if (remomteMinute != date2.getMinutes()) port.write(`m${date2.getMinutes()}\r\n`);
             remoteSecond = timeString2[2];
             if (remoteSecond != date2.getSeconds()) port.write(`s${date2.getSeconds()}\r\n`);
-            console.log(`time: ${remoteHour} ${remomteMinute} ${remoteSecond}`);
+            //console.log(`time: ${remoteHour} ${remomteMinute} ${remoteSecond}`);
     }
 });
 
