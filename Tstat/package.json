@@ -12,7 +12,7 @@
   "dependencies": {
     "@jahartley/ds2482": "^0.2.0",
     "@jahartley/ds2482-temperature": "^0.1.0",
-    "bme280-sensor": "^0.1.7",
+    "bme280-sensor": "github:jahartley/bme280-sensor",
     "i2c-bus": "^5.1.0",
     "mqtt": "^4.3.7",
     "pigpio": "^3.3.1",
