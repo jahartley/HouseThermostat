@@ -2,15 +2,33 @@ const {client} = require("./global.js");
 const DS18B20 = require('ds2482-temperature');
 
 function DsTs(rate) {
-    this.rate = rate/1000;
-    this.sense = new DS18B20({pollRate: this.rate});
+    this.rate = rate;
+    //this.sense = new DS18B20({pollRate: this.rate});
     this.dataStore = {};
-    this.sense.init().
-    then(() => {
-        this.sense.on('data', val => { console.log(val); console.log('onData'); });
+    this.lastUpdate = Date.now();
+    //this.watchdogInterval = setInterval(() => this.watchdog(), this.rate*1000);
+    // this.sense.init().
+    // then(() => {
+    //     this.sense.on('data', val => { console.log(val); console.log('onData'); });
+    //     this.sense.on('error', err => { this.errorHandler(err, "onError");});
+    // }).
+    // catch((err) => { this.errorHandler(err, "DsTs constructor");});
+    this.init();
+}
+
+DsTs.prototype.init = async function() {
+    try {
+        this.watchdogInterval = setInterval(() => this.watchdog(), this.rate);
+        this.sense = new DS18B20({pollRate: this.rate/1000});
+        await this.sense.init();
+        this.sense.on('data', val => this.read(val));
         this.sense.on('error', err => { this.errorHandler(err, "onError");});
-    }).
-    catch((err) => { this.errorHandler(err, "DsTs constructor");});
+    } catch (err) {this.errorHandler(err, "init");}
+}
+
+DsTs.prototype.watchdog = function() {
+    let timeNow = Date.now();
+    if (timeNow - this.lastUpdate > (this.rate*3)) return this.errorHandler(new Error('Watchdog'), "Watchdog Ran Out");
 }
 
 DsTs.prototype.errorHandler = async function(err, where = 'unknown') {
@@ -19,10 +37,8 @@ DsTs.prototype.errorHandler = async function(err, where = 'unknown') {
     console.log(`Resetting DsTs`);
     try {
         await this.sense.destroy();
-        this.sense = new DS18B20({pollRate: this.rate});
-        await this.sense.init();
-        this.sense.on('data', val => this.read(val));
-        this.sense.on('error', err => { this.errorHandler(err, "onError");});
+        clearInterval(this.watchdogInterval);
+        await this.init();
     } catch (err) {this.errorHandler(err, "ErrorHandler");}
 }
 
@@ -34,6 +50,7 @@ DsTs.prototype.read = async function(data) {
         }
     }
     this.dataStore[data.rom].temperature = (data.value*1.8+32).toFixed(2);
+    this.lastUpdate = Date.now();
     return this.publish(data.rom);
 }
 
