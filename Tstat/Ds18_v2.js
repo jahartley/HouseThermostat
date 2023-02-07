@@ -11,7 +11,7 @@ function DsTs(rate) {
         this.sense.on('data', val => { console.log(val); console.log('onData'); });
         this.sense.on('error', err => { console.log('onError'); console.error(err); });
     }).
-    catch((err) => {console.error(err); console.log("error at DsTs constructor");});
+    catch((err) => {console.trace(err); console.log("error at DsTs constructor");});
 }
 
 DsTs.prototype.read = async function() {
@@ -28,7 +28,7 @@ DsTs.prototype.read = async function() {
             }
             this.dataStore[data[i].rom].temperature = (data[i].value*1.8+32).toFixed(2);
         }
-    } catch (err) { console.error(err); console.log("error at DsTs.read()");}
+    } catch (err) { console.trace(err); console.log("error at DsTs.read()");}
     return this.publish();
 }
 
