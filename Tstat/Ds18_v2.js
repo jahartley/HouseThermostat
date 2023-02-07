@@ -21,7 +21,7 @@ DsTs.prototype.errorHandler = async function(err, where = 'unknown') {
         await this.sense.destroy();
         this.sense = new DS18B20({pollRate: this.rate});
         await this.sense.init();
-        this.sense.on('data', val => { console.log(val); this.read(val);});
+        this.sense.on('data', val => this.read(val));
         this.sense.on('error', err => { this.errorHandler(err, "onError");});
     } catch (err) {this.errorHandler(err, "ErrorHandler");}
 }
