@@ -18,7 +18,10 @@ function Bme(opts, name, rate, tempCorrection = 0, pressureCorrection = 0, humid
     this.humidity = 0;
     this.bmeObj.init().then(async () => {
         setInterval(async () => {this.read()} ,this.rate);
-    }).catch(console.trace);
+    }).catch((err) => {
+        console.log(`Bme constructor ${this.name}`);
+        console.trace(err);
+    });
     
 }
 
@@ -38,7 +41,7 @@ Bme.prototype.read = async function() {
         this.humidity = parseFloat(data.humidity) + this.humidityCorrection;
         this.humidity = this.humidity.toFixed(3);
         if (Math.abs(this.humidity-this.humidityOld) > 20 && tdiff < 30000) this.humidity = this.humidityOld;
-    } catch (err) { console.trace(err); }
+    } catch (err) { console.log(`Bme read ${this.name}`); console.trace(err); }
     this.publish();
 }
 

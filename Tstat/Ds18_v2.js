@@ -9,7 +9,7 @@ function DsTs(rate) {
     this.sense.init().
     then(() => {
         this.sense.on('data', val => { console.log(val); console.log('onData'); });
-        this.sense.on('error', err => { console.log('onError'); console.error(err); });
+        this.sense.on('error', err => { console.log('DsTs onError'); console.error(err); });
     }).
     catch((err) => {console.trace(err); console.log("error at DsTs constructor");});
 }
