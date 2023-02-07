@@ -21,21 +21,19 @@ DsTs.prototype.errorHandler = async function(err, where = 'unknown') {
         await this.sense.destroy();
         this.sense = new DS18B20({pollRate: this.rate});
         await this.sense.init();
-        this.sense.on('data', val => { console.log(val); console.log('onData'); });
+        this.sense.on('data', val => { console.log(val); this.read(val);});
         this.sense.on('error', err => { this.errorHandler(err, "onError");});
     } catch (err) {this.errorHandler(err, "ErrorHandler");}
 }
 
 DsTs.prototype.read = async function(data) {
-    try {
-        if (this.dataStore?.[data.rom] === undefined) {
-            this.dataStore[data.rom] = {
-                temperature: 0,
-                temperatureOld: 0
-            }
+    if (this.dataStore?.[data.rom] === undefined) {
+        this.dataStore[data.rom] = {
+            temperature: 0,
+            temperatureOld: 0
         }
-        this.dataStore[data.rom].temperature = (data.value*1.8+32).toFixed(2);
-    } catch (err) {this.errorHandler(err, "DsTs.read");}
+    }
+    this.dataStore[data.rom].temperature = (data.value*1.8+32).toFixed(2);
     return this.publish(data.rom);
 }
 
