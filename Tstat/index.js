@@ -29,7 +29,7 @@ let remoteSecond = -1;
 const Machine = require("./machine.js");
 const {client} = require("./global.js");
 const Bme = require("./Bme.js");
-const DsTs = require("./Ds18.js");
+const DsTs = require("./Ds18_v2.js");
 
 const { SerialPort } = require('serialport');
 const { DelimiterParser } = require('@serialport/parser-delimiter');
