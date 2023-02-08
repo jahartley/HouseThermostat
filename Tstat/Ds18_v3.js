@@ -41,7 +41,6 @@ DsTs.prototype.readTemps = async function() {
                 }
             }
             let data = await fs.readFile('/sys/bus/w1/devices/' + this.sensors[i] + '/w1_slave', 'utf8');
-            console.log(data);
             let value = this.parseData(data);
             if (value === false)  throw new Error("Bad sensor reading");
             console.log(`DsTs sensor ${this.sensors[i]} value ${value}`);
@@ -54,7 +53,8 @@ DsTs.prototype.readTemps = async function() {
 }
 
 DsTs.prototype.parseData = function (data) {
-    let arr = data.split('\n');  
+    let arr = data.split('\n');
+    console.log(arr);
     if (arr[0].indexOf('YES') > -1) {
       let output = data.match(/t=(-?(\d+))/);
       return output[1] / 1000;
