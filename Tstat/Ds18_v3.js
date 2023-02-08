@@ -1,9 +1,10 @@
 const {client} = require("./global.js");
-const DS18B20 = require('ds2482-temperature');
+const fs = require('fs').promises;
+const W1_FILE = '/sys/bus/w1/devices/w1_bus_master1/w1_master_slaves';
 
 function DsTs(rate) {
     this.rate = rate;
-    //this.sense = new DS18B20({pollRate: this.rate});
+    
     this.dataStore = {};
     
     //this.watchdogInterval = setInterval(() => this.watchdog(), this.rate*1000);
@@ -13,34 +14,46 @@ function DsTs(rate) {
     //     this.sense.on('error', err => { this.errorHandler(err, "onError");});
     // }).
     // catch((err) => { this.errorHandler(err, "DsTs constructor");});
-    this.init();
+    this.scan();
 }
 
-DsTs.prototype.init = async function() {
+//try {} catch (err) {}
+
+DsTs.prototype.scan = async function () {
     try {
-        this.lastUpdate = Date.now();
-        this.watchdogInterval = setInterval(() => this.watchdog(), this.rate);
-        this.sense = new DS18B20({pollRate: this.rate/1000});
-        await this.sense.init();
-        this.sense.on('data', val => this.read(val));
-        this.sense.on('error', err => { this.errorHandler(err, "onError");});
-    } catch (err) {this.errorHandler(err, "init");}
+        let data = await fs.readFile(W1_FILE, 'utf8');    
+        let parts = data.split('\n');
+        parts.pop();
+        console.log("SCAN DATA");
+        console.log(parts);
+    
+    } catch (err) {this.errorHandler(err, "scan");}
 }
 
-DsTs.prototype.watchdog = function() {
-    let timeNow = Date.now();
-    if (timeNow - this.lastUpdate > (this.rate*3)) return this.errorHandler(new Error('Watchdog'), "Watchdog Ran Out");
+DsTs.prototype.readTemps = async function() {
+    try {
+        //for each sensor...
+        let data = await fs.readFile('/sys/bus/w1/devices/' + sensor + '/w1_slave', 'utf8');
+        let value = this.parseData(data);
+        if (value === false) //reject value...
+
+    } catch (err) {this.errorHandler(err, "readTemps");}
+}
+
+DsTs.prototype.parseData = function (data) {
+    let arr = data.split('\n');  
+    if (arr[0].indexOf('YES') > -1) {
+      let output = data.match(/t=(-?(\d+))/);
+      return Math.round(output[1] / 100) / 10;
+    } else if (arr[0].indexOf('NO') > -1) {
+      return false;
+    }
+    throw new Error('Can not get temperature');
 }
 
 DsTs.prototype.errorHandler = async function(err, where = 'unknown') {
     console.log(`DsTs Error Handler fault at ${where}`); 
     console.trace(err);
-    console.log(`Resetting DsTs`);
-    try {
-        await this.sense.destroy();
-        clearInterval(this.watchdogInterval);
-        await this.init();
-    } catch (err) {this.errorHandler(err, "ErrorHandler");}
 }
 
 DsTs.prototype.read = async function(data) {
