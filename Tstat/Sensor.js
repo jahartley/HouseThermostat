@@ -13,7 +13,7 @@ class Sensor {
         console.log(`${this.name} generic restart`);
     }
     errorHandler(err, where = 'unknown') {
-        console.log(`${this.name} Error Handler fault at ${where}`); 
+        console.log(`${this.name} Error Handler fault at ${where} on ${new Date().toLocaleDateString()}`); 
         console.trace(err);
         this.restart();
     }
