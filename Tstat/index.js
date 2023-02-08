@@ -39,7 +39,7 @@ process.on('SIGINT', gracefulShutdown);
 process.on('SIGTERM', gracefulShutdown);
 
 process.on('uncaughtException', (err) => {
-    console.log('PROCESS ON ERROR CAUGHT');
+    console.log(`PROCESS ON ERROR CAUGHT at ${new Date()}`);
     console.trace(err);
 });
 

@@ -56,13 +56,10 @@ class Serial extends Sensor {
                         let timeString = newData.slice(5, newData.length-1);
                         let timeString2 = timeString.split(':');
                         if (timeString2.length != 3) break;
-                        let date2 = new Date(Date.now());
-                        remoteHour = timeString2[0];
-                        if (remoteHour != date2.getHours()) this.port.write(`o${date2.getHours()}\r\n`);
-                        remomteMinute = timeString2[1];
-                        if (remomteMinute != date2.getMinutes()) this.port.write(`m${date2.getMinutes()}\r\n`);
-                        remoteSecond = timeString2[2];
-                        if (remoteSecond != date2.getSeconds()) this.port.write(`s${date2.getSeconds()}\r\n`);
+                        let date2 = new Date();
+                        if (timeString2[0] != date2.getHours()) this.port.write(`o${date2.getHours()}\r\n`);
+                        if (timeString2[1] != date2.getMinutes()) this.port.write(`m${date2.getMinutes()}\r\n`);
+                        if (timeString2[2] != date2.getSeconds()) this.port.write(`s${date2.getSeconds()}\r\n`);
                 }
             });
             console.log("Serial initialized");
