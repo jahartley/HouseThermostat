@@ -53,7 +53,6 @@ let remomteMinute = -1;
 let remoteSecond = -1;
 
 const Machine = require("./machine.js");
-const {client, pigpio} = require("./global.js");
 const Bme = require("./Bme.js");
 const DsTs = require("./Ds18_v3.js");
 
