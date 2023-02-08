@@ -12,6 +12,21 @@
         Make Schedules...
         Make Setpoints...
 */
+function handle(signal) {
+    console.log(`Received ${signal} shutting down.`);
+    client.end();
+    for (let machine in lotsOfMachines) {
+        lotsOfMachines[machine].newRequest('stop');
+    }
+    for (let sensor in sensors) {
+        sensors[sensor].close();
+    }
+
+  }
+  
+process.on('SIGINT', handle);
+process.on('SIGTERM', handle);
+
 process.on('uncaughtException', function(err) {
     console.log('PROCESS ON ERROR CAUGHT');
     console.trace(err);

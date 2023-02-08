@@ -21,6 +21,10 @@ DsTs.prototype.init = async function () {
     } catch (err) {this.errorHandler(err, "scan");}
 }
 
+DsTs.prototype.close = function() {
+    if (this.interval) clearInterval(this.interval);
+}
+
 DsTs.prototype.readTemps = async function() {
     try {
         for (i = 0; i < this.sensors.length; i++) {

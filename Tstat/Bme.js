@@ -5,8 +5,7 @@ function Bme(opts, name, rate, tempCorrection = 0, pressureCorrection = 0, humid
     this.options = opts;
     this.name = name;
     this.rate = rate;
-    this.lastTime = 0;
-    this.bmeObj = new BME280(this.options);
+    this.lastTime = 0;    
     this.temperatureCorrection = tempCorrection;
     this.pressureCorrection = pressureCorrection;
     this.humidityCorrection = humidityCorrection;
@@ -16,13 +15,21 @@ function Bme(opts, name, rate, tempCorrection = 0, pressureCorrection = 0, humid
     this.pressure = 0;
     this.humidityOld = 0;
     this.humidity = 0;
-    this.bmeObj.init().
-        then(async () => {
-            this.interval = setInterval(async () => {this.read()} ,this.rate);}).
-        catch((err) => {
-            this.errorHandler(err, "Constructor");
-    });
-    
+    this.init();    
+}
+
+//try {} catch (err) {}
+
+Bme.prototype.init = async function() {
+    try {
+        this.bmeObj = new BME280(this.options);
+        await this.bmeObj.init();
+        this.interval = setInterval(async () => {this.read()} ,this.rate);
+    } catch (err) {this.errorHandler(err, "init");}
+}
+
+Bme.prototype.close = function() {
+    if (this.interval) clearInterval(this.interval);
 }
 
 Bme.prototype.errorHandler = async function(err, where = 'unknown') {
@@ -32,8 +39,7 @@ Bme.prototype.errorHandler = async function(err, where = 'unknown') {
     try {
         if (this.interval) clearInterval(this.interval);
         await this.bmeObj.reset();
-        await this.bmeObj.init();
-        this.interval = setInterval(async () => {this.read()} ,this.rate);
+        await this.init();
     } catch (err) {this.errorHandler(err, "ErrorHandler");}
 
 
