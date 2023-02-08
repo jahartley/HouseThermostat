@@ -65,10 +65,10 @@ const options1 = {
 //const second = new Bme(options1, "Downstream", 10000);
 
 const sensors = {};
-sensors[0] = new Bme(options1, "Before", 10000);
-sensors[1] = new Bme(options0, "After", 10000,0,1.265,0);
-sensors[2] = new DsTs(10000);
-sensors[3] = new Serial();
+sensors[0] = new Bme("Before", options1, 10000);
+sensors[1] = new Bme("After", options0, 10000);
+sensors[2] = new DsTs("Line Temps");
+sensors[3] = new Serial("Hallway");
 
 client.on('connect', () => {
     client.subscribe('home/boss/resend');
