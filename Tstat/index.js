@@ -28,7 +28,8 @@ const gracefulShutdown = () => {
     for (let sensor in sensors) {
         sensors[sensor].close();
     }
-    setTimeout(() => pigpio.terminate(), 5000);
+    setTimeout(() => {console.log("Stopping pigpio"); pigpio.terminate();}, 5000);
+    setTimeout(() => {console.log("Terminating"); process.exit();}, 8000);
 
 }
 

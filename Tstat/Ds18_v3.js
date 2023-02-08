@@ -23,6 +23,7 @@ DsTs.prototype.init = async function () {
 
 DsTs.prototype.close = function() {
     if (this.interval) clearInterval(this.interval);
+    console.log("DsTs shutdown");
 }
 
 DsTs.prototype.readTemps = async function() {

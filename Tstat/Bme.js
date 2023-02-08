@@ -30,6 +30,7 @@ Bme.prototype.init = async function() {
 
 Bme.prototype.close = function() {
     if (this.interval) clearInterval(this.interval);
+    console.log(`BME ${this.name} shutdown`);
 }
 
 Bme.prototype.errorHandler = async function(err, where = 'unknown') {

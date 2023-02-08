@@ -56,12 +56,14 @@ Serial.prototype.init = function() {
                     if (remoteSecond != date2.getSeconds()) port.write(`s${date2.getSeconds()}\r\n`);
             }
         });
+        console.log("Serial initialized");
     } catch (err) {this.errorHandler(err, 'Init');}
 }
 
 Serial.prototype.close = function() {
     try {
         this.port.close();
+        console.log("Serial shutdown");
     } catch (err) {this.errorHandler(err, 'Close');}
 }
 
