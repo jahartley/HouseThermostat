@@ -18,6 +18,7 @@ pigpio.initialize();
 
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
+    clearInterval(watchdog);
     client.publish('home/pi64', 'shutdown');
     client.end();
     for (let machine in lotsOfMachines) {
@@ -42,74 +43,12 @@ process.on('uncaughtException', (err) => {
 });
 
 
-
-
-
-let remoteTemperature = -150;
-let remoteBmeTemperature = -150
-let remoteBmeHumidity = -150;
-let remoteBmePressure = -150;
-let remoteBmeAq = -1;
-let remoteHour = -1;
-let remomteMinute = -1;
-let remoteSecond = -1;
-
 const Machine = require("./machine.js");
 const Bme = require("./Bme.js");
 const DsTs = require("./Ds18_v3.js");
+const Serial = require("./Serial.js");
 
-const { SerialPort } = require('serialport');
-const { DelimiterParser } = require('@serialport/parser-delimiter');
-const port = new SerialPort({ path: '/dev/serial0', baudRate: 9600});
-const parser = port.pipe(new DelimiterParser({ delimiter: '\n' }));
 
-parser.on('data', (data) => {
-    //console.log(data);
-    //console.log(`to string: ${data.toString()}`);
-    let newData = data.toString();
-    let header = newData.slice(0,1);
-    //console.log(newData);
-    /* 
-        t70.25
-        y70.1
-        b35.3
-        g653643
-        p96159
-        Time 0:52:36
-
-    */
-    switch(header) {
-        case 't':
-            remoteTemperature = parseFloat(newData.slice(1,newData.length-1));
-            //console.log(remoteTemperature);
-            break;
-        case 'y':
-            remoteBmeTemperature = parseFloat(newData.slice(1,newData.length-1));
-            break;
-        case 'b':
-            remoteBmeHumidity = parseFloat(newData.slice(1,newData.length-1));
-            break;
-        case 'g':
-            remoteBmeAq = parseFloat(newData.slice(1,newData.length-1));
-            break;
-        case 'p':
-            remoteBmePressure = parseFloat(newData.slice(1,newData.length-1))/100;
-            //console.log(`Remote pressure: ${remoteBmePressure}`);
-            break;
-        case 'T':
-            let timeString = newData.slice(5, newData.length-1);
-            let timeString2 = timeString.split(':');
-            if (timeString2.length != 3) break;
-            let date2 = new Date(Date.now());
-            remoteHour = timeString2[0];
-            if (remoteHour != date2.getHours()) port.write(`o${date2.getHours()}\r\n`);
-            remomteMinute = timeString2[1];
-            if (remomteMinute != date2.getMinutes()) port.write(`m${date2.getMinutes()}\r\n`);
-            remoteSecond = timeString2[2];
-            if (remoteSecond != date2.getSeconds()) port.write(`s${date2.getSeconds()}\r\n`);
-            //console.log(`time: ${remoteHour} ${remomteMinute} ${remoteSecond}`);
-    }
-});
 
 const options0 = {
     i2cBusNo   : 1, // defaults to 1
@@ -128,7 +67,7 @@ const sensors = {};
 sensors[0] = new Bme(options1, "Before", 10000);
 sensors[1] = new Bme(options0, "After", 10000,0,1.265,0);
 sensors[2] = new DsTs(10000);
-
+sensors[3] = new Serial();
 
 client.on('connect', () => {
     client.subscribe('home/boss/resend');
@@ -145,7 +84,7 @@ client.on('message', function(topic, message) {
 });
 
 //watchdog
-setInterval(() => {
+const watchdog = setInterval(() => {
     client.publish('home/pi64', 'ok');
 }, 300000);
 
