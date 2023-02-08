@@ -24,10 +24,10 @@ function handle(signal) {
 
   }
   
-process.on('SIGINT', handle);
-process.on('SIGTERM', handle);
+process.on('SIGINT', () => handle("SIGINT") );
+process.on('SIGTERM', () => handle("SIGTERM") );
 
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', (err) => {
     console.log('PROCESS ON ERROR CAUGHT');
     console.trace(err);
 });
