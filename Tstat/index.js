@@ -23,7 +23,9 @@ const gracefulShutdown = () => {
     }
 
 }
-  
+
+process.on('SIGHUP', gracefulShutdown);
+process.on('SIGCONT', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
 process.on('SIGTERM', gracefulShutdown);
 
