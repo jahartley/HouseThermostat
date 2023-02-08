@@ -49,11 +49,11 @@ Serial.prototype.init = function() {
                     if (timeString2.length != 3) break;
                     let date2 = new Date(Date.now());
                     remoteHour = timeString2[0];
-                    if (remoteHour != date2.getHours()) port.write(`o${date2.getHours()}\r\n`);
+                    if (remoteHour != date2.getHours()) this.port.write(`o${date2.getHours()}\r\n`);
                     remomteMinute = timeString2[1];
-                    if (remomteMinute != date2.getMinutes()) port.write(`m${date2.getMinutes()}\r\n`);
+                    if (remomteMinute != date2.getMinutes()) this.port.write(`m${date2.getMinutes()}\r\n`);
                     remoteSecond = timeString2[2];
-                    if (remoteSecond != date2.getSeconds()) port.write(`s${date2.getSeconds()}\r\n`);
+                    if (remoteSecond != date2.getSeconds()) this.port.write(`s${date2.getSeconds()}\r\n`);
             }
         });
         console.log("Serial initialized");
