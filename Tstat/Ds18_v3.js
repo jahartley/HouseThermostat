@@ -4,7 +4,7 @@ const W1_FILE = '/sys/bus/w1/devices/w1_bus_master1/w1_master_slaves';
 
 function DsTs(rate) {
     this.rate = rate;
-    
+    this.sensors = [];
     this.dataStore = {};
     
     //this.watchdogInterval = setInterval(() => this.watchdog(), this.rate*1000);
@@ -14,28 +14,39 @@ function DsTs(rate) {
     //     this.sense.on('error', err => { this.errorHandler(err, "onError");});
     // }).
     // catch((err) => { this.errorHandler(err, "DsTs constructor");});
-    this.scan();
+    this.init();
 }
 
 //try {} catch (err) {}
 
-DsTs.prototype.scan = async function () {
+DsTs.prototype.init = async function () {
     try {
         let data = await fs.readFile(W1_FILE, 'utf8');    
         let parts = data.split('\n');
         parts.pop();
-        console.log("SCAN DATA");
-        console.log(parts);
-    
+        this.sensors = parts;
+        if (this.sensors.length === 0) throw new Error("No sensors found");
+        this.interval = setInterval(() => {this.readTemps}, this.rate);
     } catch (err) {this.errorHandler(err, "scan");}
 }
 
 DsTs.prototype.readTemps = async function() {
     try {
-        //for each sensor...
-        let data = await fs.readFile('/sys/bus/w1/devices/' + sensor + '/w1_slave', 'utf8');
-        let value = this.parseData(data);
-        if (value === false)  return;//reject value...
+        for (i = 0; i < this.sensors.length; i++) {
+            if (this.dataStore?.[this.sensors[i]] === undefined) {
+                this.dataStore[this.sensors[i]] = {
+                    temperature: 0,
+                    temperatureOld: 0
+                }
+            }
+            let data = await fs.readFile('/sys/bus/w1/devices/' + this.sensors[i] + '/w1_slave', 'utf8');
+            let value = this.parseData(data);
+            if (value === false)  throw new Error("Bad sensor reading");
+            console.log(`DsTs sensor ${this.sensors[i]} value ${value}`);
+            this.dataStore[this.sensors[i]].temperature = (value*1.8+32).toFixed(2);
+            console.log(`DsTs sensor ${this.sensors[i]} corrected value ${this.dataStore[this.sensors[i]].temperature}`);
+        }
+        
 
     } catch (err) {this.errorHandler(err, "readTemps");}
 }
