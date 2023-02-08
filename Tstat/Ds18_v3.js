@@ -56,6 +56,7 @@ DsTs.prototype.parseData = function (data) {
     let arr = data.split('\n');  
     if (arr[0].indexOf('YES') > -1) {
       let output = data.match(/t=(-?(\d+))/);
+      console.log(output);
       return Math.round(output[1] / 100) / 10;
     } else if (arr[0].indexOf('NO') > -1) {
       return false;
