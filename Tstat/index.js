@@ -12,7 +12,7 @@
         Make Schedules...
         Make Setpoints...
 */
-const {client, pigpio} = require("./global.js");
+const {client, pigpio, dataBus} = require("./global.js");
 
 pigpio.initialize();
 
@@ -45,9 +45,9 @@ process.on('uncaughtException', (err) => {
 
 
 const Machine = require("./machine.js");
-const Bme = require("./Bme.js");
-const DsTs = require("./Ds18_v3.js");
-const Serial = require("./Serial.js");
+const Bme = require("./Bme_v2.js");
+const DsTs = require("./Ds18_v4.js");
+const Serial = require("./Serial_v2.js");
 
 
 
