@@ -24,15 +24,6 @@ const gracefulShutdown = () => {
 
 }
 
-process.on('SIGHUP', gracefulShutdown);
-process.on('SIGCONT', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
-
-process.on('uncaughtException', (err) => {
-    console.log('PROCESS ON ERROR CAUGHT');
-    console.trace(err);
-});
 
 
 let remoteTemperature = -150;
@@ -151,3 +142,14 @@ setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 10000);
 setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 13000);
 setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 23000);
 setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 25000);
+
+process.on('SIGHUP', gracefulShutdown);
+process.on('SIGCONT', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
+
+process.on('uncaughtException', (err) => {
+    console.log('PROCESS ON ERROR CAUGHT');
+    console.trace(err);
+});
+
