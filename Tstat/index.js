@@ -23,10 +23,11 @@ const gracefulShutdown = () => {
     for (let machine in lotsOfMachines) {
         lotsOfMachines[machine].newRequest('stop');
     }
-    pigpio.terminate();
+    
     for (let sensor in sensors) {
         sensors[sensor].close();
     }
+    setTimeout(() => pigpio.terminate(), 5000);
 
 }
 
