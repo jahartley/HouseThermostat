@@ -26,7 +26,8 @@ DsTs.prototype.init = async function () {
         parts.pop();
         this.sensors = parts;
         if (this.sensors.length === 0) throw new Error("No sensors found");
-        this.interval = setInterval(() => {this.readTemps}, this.rate);
+        this.interval = setInterval(() => {this.readTemps();}, this.rate);
+        console.log(`DsTs found ${this.sensors.length} devices. Init Complete`);
     } catch (err) {this.errorHandler(err, "scan");}
 }
 
