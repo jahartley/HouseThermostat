@@ -2,9 +2,8 @@
 const deviceOn = 0;
 const deviceOff = 1;
 
-
-const Gpio = require('pigpio').Gpio;
 const {client} = require("./global.js");
+const Gpio = pigpio.Gpio;
 
 
 function Machine(delay, pin, name, rate = 1000) {

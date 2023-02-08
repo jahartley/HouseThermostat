@@ -12,12 +12,29 @@
         Make Schedules...
         Make Setpoints...
 */
+const {client, pigpio} = require("./global.js");
+
+pigpio.initialize();
+
+process.on('SIGHUP', gracefulShutdown);
+process.on('SIGCONT', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
+
+process.on('uncaughtException', (err) => {
+    console.log('PROCESS ON ERROR CAUGHT');
+    console.trace(err);
+});
+
+
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
+    client.publish('home/pi64', 'shutdown');
     client.end();
     for (let machine in lotsOfMachines) {
         lotsOfMachines[machine].newRequest('stop');
     }
+    pigpio.terminate();
     for (let sensor in sensors) {
         sensors[sensor].close();
     }
@@ -36,7 +53,7 @@ let remomteMinute = -1;
 let remoteSecond = -1;
 
 const Machine = require("./machine.js");
-const {client} = require("./global.js");
+const {client, pigpio} = require("./global.js");
 const Bme = require("./Bme.js");
 const DsTs = require("./Ds18_v3.js");
 
@@ -142,14 +159,3 @@ setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 10000);
 setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 13000);
 setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 23000);
 setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 25000);
-
-process.on('SIGHUP', gracefulShutdown);
-process.on('SIGCONT', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
-
-process.on('uncaughtException', (err) => {
-    console.log('PROCESS ON ERROR CAUGHT');
-    console.trace(err);
-});
-
