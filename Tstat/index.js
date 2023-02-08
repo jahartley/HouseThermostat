@@ -12,8 +12,8 @@
         Make Schedules...
         Make Setpoints...
 */
-function handle(signal) {
-    console.log(`Received ${signal} shutting down.`);
+const gracefulShutdown = () => {
+    console.log(`Shutting down.`);
     client.end();
     for (let machine in lotsOfMachines) {
         lotsOfMachines[machine].newRequest('stop');
@@ -22,10 +22,10 @@ function handle(signal) {
         sensors[sensor].close();
     }
 
-  }
+}
   
-process.on('SIGINT', () => handle("SIGINT") );
-process.on('SIGTERM', () => handle("SIGTERM") );
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
 
 process.on('uncaughtException', (err) => {
     console.log('PROCESS ON ERROR CAUGHT');
