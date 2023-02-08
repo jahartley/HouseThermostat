@@ -10,8 +10,9 @@
   "author": "Judson Hartley",
   "license": "ISC",
   "dependencies": {
-    "ds2482-temperature": "github:jahartley/node-ds2482-temperature",
     "bme280-sensor": "github:jahartley/bme280-sensor",
+    "ds18b20": "^0.1.0",
+    "ds2482-temperature": "github:jahartley/node-ds2482-temperature",
     "i2c-bus": "^5.1.0",
     "mqtt": "^4.3.7",
     "pigpio": "^3.3.1",
