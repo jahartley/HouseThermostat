@@ -7,12 +7,12 @@ class Serial extends Sensor {
     constructor(name) {
         super(name);
         this.dataStore = {
-            remoteBmeAq: {
+            airQualityOhms: {
                 value: 0,
                 valueOld: 0,
                 publish: 100
             },
-            remoteBmeHumidity: {
+            humidity: {
                 value: 0,
                 valueOld: 0,
                 publish: 0.5
@@ -38,19 +38,19 @@ class Serial extends Sensor {
                 */
                 switch(header) {
                     case 't':
-                        this.save('remoteTemperature', parseFloat(newData.slice(1,newData.length-1)));
+                        this.save('temperature', parseFloat(newData.slice(1,newData.length-1)));
                         break;
                     case 'y':
-                        this.save('remoteBmeTemperature', parseFloat(newData.slice(1,newData.length-1)));
+                        this.save('BME680temperature', parseFloat(newData.slice(1,newData.length-1)));
                         break;
                     case 'b':
-                        this.save('remoteBmeHumidity', parseFloat(newData.slice(1,newData.length-1)));
+                        this.save('humidity', parseFloat(newData.slice(1,newData.length-1)));
                         break;
                     case 'g':
-                        this.save('remoteBmeAq', parseFloat(newData.slice(1,newData.length-1)));
+                        this.save('airQualityOhms', parseFloat(newData.slice(1,newData.length-1)));
                         break;
                     case 'p':
-                        this.save('remoteBmePressure', parseFloat(newData.slice(1,newData.length-1))/100);
+                        this.save('pressure', parseFloat(newData.slice(1,newData.length-1))/100);
                         break;
                     case 'T':
                         let timeString = newData.slice(5, newData.length-1);

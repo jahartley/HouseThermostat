@@ -27,7 +27,7 @@ class DsTs extends Sensor {
     }
     async readTemps() {
         try {
-            for (i = 0; i < this.sensors.length; i++) {
+            for (let i = 0; i < this.sensors.length; i++) {
                 let rom = this.sensors[i];
                 let data = await fs.readFile('/sys/bus/w1/devices/' + rom + '/w1_slave', 'utf8');
                 let value = this.parseData(data);
