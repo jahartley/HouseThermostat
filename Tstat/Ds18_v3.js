@@ -6,18 +6,8 @@ function DsTs(rate) {
     this.rate = rate;
     this.sensors = [];
     this.dataStore = {};
-    
-    //this.watchdogInterval = setInterval(() => this.watchdog(), this.rate*1000);
-    // this.sense.init().
-    // then(() => {
-    //     this.sense.on('data', val => { console.log(val); console.log('onData'); });
-    //     this.sense.on('error', err => { this.errorHandler(err, "onError");});
-    // }).
-    // catch((err) => { this.errorHandler(err, "DsTs constructor");});
     this.init();
 }
-
-//try {} catch (err) {}
 
 DsTs.prototype.init = async function () {
     try {
@@ -34,32 +24,28 @@ DsTs.prototype.init = async function () {
 DsTs.prototype.readTemps = async function() {
     try {
         for (i = 0; i < this.sensors.length; i++) {
-            if (this.dataStore?.[this.sensors[i]] === undefined) {
-                this.dataStore[this.sensors[i]] = {
+            let rom = this.sensors[i];
+            if (this.dataStore?.[rom] === undefined) {
+                this.dataStore[rom] = {
                     temperature: 0,
                     temperatureOld: 0
                 }
             }
-            let data = await fs.readFile('/sys/bus/w1/devices/' + this.sensors[i] + '/w1_slave', 'utf8');
+            let data = await fs.readFile('/sys/bus/w1/devices/' + rom + '/w1_slave', 'utf8');
             let value = this.parseData(data);
-            if (value === false)  throw new Error("Bad sensor reading");
-            console.log(`DsTs sensor ${this.sensors[i]} value ${value}`);
-            this.dataStore[this.sensors[i]].temperature = (value*1.8+32).toFixed(2);
-            console.log(`DsTs sensor ${this.sensors[i]} corrected value ${this.dataStore[this.sensors[i]].temperature}`);
+            this.dataStore[rom].temperature = (value*1.8+32).toFixed(2);
+            this.publish(rom);
         }
-        
-
     } catch (err) {this.errorHandler(err, "readTemps");}
 }
 
 DsTs.prototype.parseData = function (data) {
     let arr = data.split('\n');
-    console.log(arr);
     if (arr[0].indexOf('YES') > -1) {
       let output = data.match(/t=(-?(\d+))/);
       return output[1] / 1000;
     } else if (arr[0].indexOf('NO') > -1) {
-      return false;
+      throw new Error ('CRC check error');
     }
     throw new Error('Can not get temperature');
 }
@@ -67,18 +53,6 @@ DsTs.prototype.parseData = function (data) {
 DsTs.prototype.errorHandler = async function(err, where = 'unknown') {
     console.log(`DsTs Error Handler fault at ${where}`); 
     console.trace(err);
-}
-
-DsTs.prototype.read = async function(data) {
-    if (this.dataStore?.[data.rom] === undefined) {
-        this.dataStore[data.rom] = {
-            temperature: 0,
-            temperatureOld: 0
-        }
-    }
-    this.dataStore[data.rom].temperature = (data.value*1.8+32).toFixed(2);
-    this.lastUpdate = Date.now();
-    return this.publish(data.rom);
 }
 
 DsTs.prototype.publish = function(rom) {
