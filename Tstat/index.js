@@ -94,12 +94,12 @@ lotsOfMachines[0] = new Machine(10000, 5, "Fan ONE");
 lotsOfMachines[1] = new Machine(10000, 6, "Heat ONE");
 lotsOfMachines[2] = new Machine(10000, 13, "Cool ONE");
 
-console.log(lotsOfMachines[0].state);
-setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 7000);
-setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 10000);
-setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 13000);
-setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 23000);
-setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 25000);
+// console.log(lotsOfMachines[0].state);
+// setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 7000);
+// setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 10000);
+// setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 13000);
+// setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 23000);
+// setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 25000);
 
 class Ema {
     constructor(name, samples, stale) {
