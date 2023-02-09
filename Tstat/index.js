@@ -119,19 +119,19 @@ class Ema {
     }
     pushValue(value) {
         let float = parseFloat(value);
-        console.log(`PushValue ${this.name} float ${float}`);
         if (Date.now()-this.timer > this.stale) {
             //ema stale. reset.
             this.ema = float.toFixed(3);
         } else {
-            let emaValue = parseFloat(((float - this.ema)*this.weight)+this.ema);
+            let emaLast = parseFloat(this.ema);
+            console.log(emaLast, float, (float-emaLast), this.weight, (float-emaLast)*this.weight, (float-emaLast)*this.weight+emaLast );
+            let emaValue = parseFloat(((float - emaLast)*this.weight)+emaLast);
             this.ema = emaValue.toFixed(3);
         }
-        
         console.log(`${this.name} ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
         this.timer = Date.now();
     }
 }
 
-const ema1 = new Ema('Hallway/temperature', 10, 60000);
+const ema1 = new Ema('Hallway/temperature', 20, 60000);
 const ema2 = new Ema('Line Temps/28-0316a27915ac', 10, 60000);
