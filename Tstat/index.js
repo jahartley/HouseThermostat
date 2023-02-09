@@ -133,5 +133,5 @@ class Ema {
     }
 }
 
-const ema1 = new Ema('Hallway/temperature', 20, 60000);
+//const ema1 = new Ema('Hallway/temperature', 20, 60000);
 const ema2 = new Ema('Line Temps/28-0316a27915ac', 10, 60000);
