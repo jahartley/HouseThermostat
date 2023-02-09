@@ -16,21 +16,21 @@
 console.log("-------------------------------------------------");
 const {client, pigpio, dataBus} = require("./global.js");
 
-pigpio.initialize();
+//pigpio.initialize();
 
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
     clearInterval(watchdog);
     client.publish('home/pi64', 'shutdown');
     client.end();
-    for (let machine in lotsOfMachines) {
-        lotsOfMachines[machine].newRequest('stop');
-    }
+    // for (let machine in lotsOfMachines) {
+    //     lotsOfMachines[machine].newRequest('stop');
+    // }
     
     for (let sensor in sensors) {
         sensors[sensor].close();
     }
-    setTimeout(() => {console.log("Stopping pigpio"); pigpio.terminate();}, 5000);
+    //setTimeout(() => {console.log("Stopping pigpio"); pigpio.terminate();}, 5000);
     setTimeout(() => {console.log("Terminating"); process.exit();}, 8000);
 
 }
@@ -46,7 +46,7 @@ process.on('uncaughtException', (err) => {
 });
 
 
-const Machine = require("./machine.js");
+//const Machine = require("./machine.js");
 const Bme = require("./Bme_v2.js");
 const DsTs = require("./Ds18_v4.js");
 const Serial = require("./Serial_v2.js");
@@ -91,10 +91,10 @@ const watchdog = setInterval(() => {
     client.publish('home/pi64', 'ok');
 }, 300000);
 
-let lotsOfMachines = {};
-lotsOfMachines[0] = new Machine(10000, 5, "Fan ONE");
-lotsOfMachines[1] = new Machine(10000, 6, "Heat ONE");
-lotsOfMachines[2] = new Machine(10000, 13, "Cool ONE");
+// let lotsOfMachines = {};
+// lotsOfMachines[0] = new Machine(10000, 5, "Fan ONE");
+// lotsOfMachines[1] = new Machine(10000, 6, "Heat ONE");
+// lotsOfMachines[2] = new Machine(10000, 13, "Cool ONE");
 
 // console.log(lotsOfMachines[0].state);
 // setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 7000);
@@ -136,37 +136,4 @@ class Ema {
 }
 
 //const ema1 = new Ema('Hallway/temperature', 10, 60000);
-const ema2 = new Ema('Line Temps/28-0316a27915ac', 5, 60000);
-
-const StateMachine = require('henderson');
-
-const trafficLight = new StateMachine({
-    initial : 'red',
-    states  : {
-      green  : ['yellow'],
-      yellow : ['green', 'red'],
-      red    : ['yellow'],
-    },
-    error : console.error.bind(console, 'Error: ')
-});
-
-trafficLight.on('*', (...args) => console.log("trafficLight on '*'", ...args));
-trafficLight.on('before:yellow', () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log('timeout done.');
-            resolve();
-        }, 10000);
-    });
-});
-
-const tryme = async () => {
-    await trafficLight.go('yellow');
-    await trafficLight.go('green');
-    await trafficLight.go('yellow');
-    await trafficLight.go('red');
-}
-
-//tryme();
-//trafficLight.go('yellow').then((...args) => console.log('now Yellow', ...args));
-
+//const ema2 = new Ema('Line Temps/28-0316a27915ac', 5, 60000);
