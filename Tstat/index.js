@@ -100,3 +100,32 @@ setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 10000);
 setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 13000);
 setTimeout(() => {lotsOfMachines[0].newRequest('stop')}, 23000);
 setTimeout(() => {lotsOfMachines[0].newRequest('start')}, 25000);
+
+const ema1 = new Ema('Hallway/temperature', 10, 60000);
+dataBus.on('Hallway/temperature', (value) => ema1.pushValue(value));
+
+class Ema {
+    constructor(name, samples, stale) {
+        this.name = name;
+        this.weight = (2/(samples+1));
+        this.stale = stale;
+        this.timer = 0;
+        this.ema = 0;
+    }
+    getValue () {
+        if (Date.now()-this.timer > this.stale) {
+            return null;
+        } else {
+            return this.ema;
+        }
+    }
+    pushValue(value) {
+        if (Date.now()-this.timer > this.stale) {
+            //ema stale. reset.
+            this.ema = value;
+        } else {
+            this.ema = (value - this.ema)*this.weight+this.ema;
+        }
+        console.log(`Ema1 ema: ${this.ema} value: ${value}`);
+    }
+}
