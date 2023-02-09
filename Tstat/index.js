@@ -150,7 +150,7 @@ const trafficLight = new StateMachine({
     error : console.error.bind(console, 'Error: ')
 });
 
-trafficLight.on('*', (...args) => console.log(...args));
+trafficLight.on('*', (...args) => console.log("trafficLight on '*'", ...args));
 trafficLight.on('before:yellow', () => {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -159,5 +159,14 @@ trafficLight.on('before:yellow', () => {
         }, 10000);
     });
 });
-trafficLight.go('yellow').then((...args) => console.log('now Yellow', ...args));
+
+const tryme = async () => {
+    await trafficLight.go('yellow');
+    await trafficLight.go('green');
+    await trafficLight.go('yellow');
+    await trafficLight.go('red');
+}
+
+tryme();
+//trafficLight.go('yellow').then((...args) => console.log('now Yellow', ...args));
 
