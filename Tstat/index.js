@@ -12,6 +12,8 @@
         Make Schedules...
         Make Setpoints...
 */
+
+console.log("-------------------------------------------------");
 const {client, pigpio, dataBus} = require("./global.js");
 
 pigpio.initialize();
