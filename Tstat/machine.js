@@ -2,7 +2,7 @@
 const deviceOn = 0;
 const deviceOff = 1;
 
-const {client, pigpio} = require("./global.js");
+const {client, pigpio, dataBus} = require("./global.js");
 const Gpio = pigpio.Gpio;
 
 

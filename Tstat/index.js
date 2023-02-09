@@ -124,11 +124,11 @@ class Ema {
             this.ema = float.toFixed(3);
         } else {
             let emaLast = parseFloat(this.ema);
-            console.log(emaLast, float, (float-emaLast), this.weight, (float-emaLast)*this.weight, (float-emaLast)*this.weight+emaLast );
+            //console.log(emaLast, float, (float-emaLast), this.weight, (float-emaLast)*this.weight, (float-emaLast)*this.weight+emaLast );
             let emaValue = parseFloat(((float - emaLast)*this.weight)+emaLast);
             this.ema = emaValue.toFixed(3);
         }
-        console.log(`${this.name} ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
+        //console.log(`${this.name} ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
         this.timer = Date.now();
     }
 }
