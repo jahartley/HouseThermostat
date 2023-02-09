@@ -149,5 +149,13 @@ const trafficLight = new StateMachine({
 });
 
 trafficLight.on('*', (...args) => console.log(...args));
-trafficLight.go('yellow').then((...args) => console.log(...args));
+trafficLight.on('before:yellow', () => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            console.log('timeout done.');
+            resolve();
+        }, 10000);
+    });
+});
+trafficLight.go('yellow').then((...args) => console.log('now Yellow', ...args));
 
