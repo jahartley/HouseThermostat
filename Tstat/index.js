@@ -108,6 +108,7 @@ class Ema {
         this.stale = stale;
         this.timer = 0;
         this.ema = 0;
+        dataBus.on(this.name, (value) => this.pushValue(value));
     }
     getValue () {
         if (Date.now()-this.timer > this.stale) {
@@ -124,11 +125,10 @@ class Ema {
             this.ema = (value - this.ema)*this.weight+this.ema;
         }
         
-        console.log(`Ema1 ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
+        console.log(`${this.name} ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
         this.timer = Date.now();
     }
 }
 
 const ema1 = new Ema('Hallway/temperature', 10, 60000);
-dataBus.on('Hallway/temperature', (value) => ema1.pushValue(value));
-
+const ema2 = new Ema('Line Temps/28-0316a27915ac', 10, 60000);
