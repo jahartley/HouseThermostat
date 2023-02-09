@@ -119,11 +119,12 @@ class Ema {
     }
     pushValue(value) {
         let float = parseFloat(value);
+        console.log(`PushValue ${this.name} float ${float}`);
         if (Date.now()-this.timer > this.stale) {
             //ema stale. reset.
             this.ema = float.toFixed(3);
         } else {
-            let emaValue = ((float - this.ema)*this.weight)+this.ema;
+            let emaValue = parseFloat(((float - this.ema)*this.weight)+this.ema);
             this.ema = emaValue.toFixed(3);
         }
         
