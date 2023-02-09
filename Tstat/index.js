@@ -118,11 +118,12 @@ class Ema {
         }
     }
     pushValue(value) {
+        value = parseFloat(value);
         if (Date.now()-this.timer > this.stale) {
             //ema stale. reset.
             this.ema = value;
         } else {
-            this.ema = (value - this.ema)*this.weight+this.ema;
+            this.ema = ((value - this.ema)*this.weight)+this.ema;
         }
         
         console.log(`${this.name} ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
