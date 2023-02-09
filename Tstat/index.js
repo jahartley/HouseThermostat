@@ -149,5 +149,5 @@ const trafficLight = new StateMachine({
 });
 
 trafficLight.on('*', (...args) => console.log(...args));
-trafficLight.go('yellow');
+trafficLight.go('yellow').then((...args) => console.log(...args));
 
