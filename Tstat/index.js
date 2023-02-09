@@ -167,6 +167,6 @@ const tryme = async () => {
     await trafficLight.go('red');
 }
 
-tryme();
+//tryme();
 //trafficLight.go('yellow').then((...args) => console.log('now Yellow', ...args));
 
