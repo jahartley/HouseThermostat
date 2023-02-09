@@ -38,7 +38,7 @@ class Sensor {
         console.log("Whats wrong Here ", this.name, name, value, valueOld, (value-valueOld), publishDifference);
         if (Math.abs(value - valueOld) > publishDifference) {
             client.publish(`home/hvac/${this.name}/${name}`, value.toString());
-            valueOld = value;
+            this.dataStore[name].valueOld = value;
         }
     }
     resend() {
