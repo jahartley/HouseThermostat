@@ -123,7 +123,9 @@ class Ema {
         } else {
             this.ema = (value - this.ema)*this.weight+this.ema;
         }
-        console.log(`Ema1 ema: ${this.ema} value: ${value}`);
+        
+        console.log(`Ema1 ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
+        this.timer = Date.now();
     }
 }
 
