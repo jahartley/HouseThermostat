@@ -135,3 +135,19 @@ class Ema {
 
 //const ema1 = new Ema('Hallway/temperature', 10, 60000);
 const ema2 = new Ema('Line Temps/28-0316a27915ac', 5, 60000);
+
+const StateMachine = require('henderson');
+
+const trafficLight = new StateMachine({
+    initial : 'red',
+    states  : {
+      green  : ['yellow'],
+      yellow : ['green', 'red'],
+      red    : ['yellow'],
+    },
+    error : console.error.bind(console, 'Error: ')
+});
+
+trafficLight.on('*', (...args) => console.log(...args));
+trafficLight.go('yellow');
+
