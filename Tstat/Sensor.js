@@ -32,9 +32,8 @@ class Sensor {
         if (this.dataStore?.[name] === undefined) return;
         if (this.dataStore[name]?.value === undefined) return;
         if (this.dataStore[name]?.valueOld === undefined) return;
-        let publishDifference;
-        if (this.dataStore[name]?.publish === undefined) publishDifference = 0.2;
-        else publishDifference = this.dataStore[name].publish;
+        let publishDifference = 0.2;
+        if (this.dataStore[name]?.publish === undefined) {publishDifference = 0.2;} else {publishDifference = this.dataStore[name].publish;}
         let { value, valueOld} = this.dataStore[name];
         if (Math.abs(value - valueOld) > publishDifference) {
             client.publish(`home/hvac/${this.name}/${name}`, value.toString());

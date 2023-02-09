@@ -67,7 +67,7 @@ const options1 = {
 const sensors = {};
 sensors[0] = new Bme("DuctBeforeHVAC", options1, 10000);
 sensors[1] = new Bme("DuctAfterHVAC", options0, 10000);
-sensors[2] = new DsTs("Line Temps", 5000);
+sensors[2] = new DsTs("Line Temps");
 sensors[3] = new Serial("Hallway");
 
 client.on('connect', () => {
