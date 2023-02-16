@@ -10,9 +10,9 @@ class hvacLogic {
         this.mode = 'init';
         this.step = 0;
         this.workerInterval = 1000;
-        this.fanMode = 'Auto';
-        this.userMode = 'Auto';
-        this.userFanMode = 'Auto';
+        this.fanMode = 'init';
+        this.userMode = 'init';
+        this.userFanMode = 'init';
         this.temperature = -150;
         this.intervals = {};
         this.machines = {};
@@ -25,6 +25,7 @@ class hvacLogic {
         client.publish(baseTopic + "userFanMode", this.userFanMode);
         this.setUserMode('Auto');
         this.setUserFanMode('Auto');
+
     }
     equipmentBuilder(location) {        
         for (let item in hvac[location]) {
