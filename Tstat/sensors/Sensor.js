@@ -33,7 +33,7 @@ class Sensor {
                 value: 0,
                 valueOld: 0,
                 emaPeriod: this.data.ema,
-                ema: new Ema(this.data.ema),
+                ema: new Ema(this.data.name, this.data.ema),
                 publish: this.data.publish
             };
             return true;
