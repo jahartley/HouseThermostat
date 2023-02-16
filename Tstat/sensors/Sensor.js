@@ -14,6 +14,7 @@ class Sensor {
         if (this.data?.name === undefined) throw new Error("Sensor constructor no name");
         if (this.data?.rate === undefined) this.data.rate = sensorDefaults.dataRate;
         if (this.data?.ema === undefined) this.data.ema = sensorDefaults.ema
+        if (this.data?.publish === undefined) this.data.publish = sensorDefaults.publish
         if (this.data.dataStore === undefined) this.data.dataStore = {};
     }
     close() {
