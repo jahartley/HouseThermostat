@@ -52,7 +52,7 @@ class Machine {
     constructor(opts) {
         this.data = opts;
         this.shutdownNow = false;
-        this.init();
+        this.machineInit();
     }
     async poll(req){
         //console.log(`${this.data.name} poll request ${req}`);
@@ -83,7 +83,7 @@ class Machine {
         //console.log(`${this.data.name} poll request ${req} Moved to new state ${this.state} SUCCESS`);
         return true;
     }
-    init() {
+    machineInit() {
         //set all timers to now.
         for (let timer in this.data.timers) {
             this.data.timers[timer] = Date.now();
