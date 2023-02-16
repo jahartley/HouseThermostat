@@ -62,7 +62,7 @@ hvac.fanModes = {
 hvac.machines = {
     0: {
         name: 'fan',
-        neededClass: 'GpioMachine',
+        neededClass: 'SimMachine',
         pin: 5,
         deviceOn: 0,
         deviceOff: 1,
