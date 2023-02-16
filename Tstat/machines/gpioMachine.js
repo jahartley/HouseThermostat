@@ -20,6 +20,7 @@ class GpioMachine extends Machine {
         this.gpio = new Gpio(this.data.pin, {mode: Gpio.OUTPUT});
         if (!this[this.data.initialFunc]()) throw new Error(`${this.data.name} init failed!`);
         this.state = this.data.initialState;
+        this.eventEmit(this.data.initialState);
         console.log(`Gpio Machine ${this.data.name} init complete`);
     }
     stop() {

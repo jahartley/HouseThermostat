@@ -9,6 +9,7 @@ class SimMachine extends Machine {
         console.log(`${this.data.name} setup. init pin ${this.data.pin}`);
         if (!this[this.data.initialFunc]()) throw new Error(`${this.data.name} init failed!`);
         this.state = this.data.initialState;
+        this.eventEmit(this.data.initialState);
         console.log(`${this.data.name} SimMachine init complete`);
     }
     stop() {
