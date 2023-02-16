@@ -27,7 +27,8 @@ class Ema {
             //console.log(emaLast, float, (float-emaLast), this.weight, (float-emaLast)*this.weight, (float-emaLast)*this.weight+emaLast );
             let emaValue = parseFloat((float * k)+(emaLast*(1-k)));
             this.ema = emaValue.toFixed(3);
-            console.log(`${this.name} value ${value} ema: ${this.ema} emaValue: ${emaValue} emaLast: ${emaLast} k: ${k} tDiff: ${timeDiff}`);
+            console.log(`${this.name} timePeriod ${this.timePeriod} $ k: ${k} tDiff: ${timeDiff}`);
+            //console.log(`${this.name} value ${value} ema: ${this.ema} emaValue: ${emaValue} emaLast: ${emaLast} k: ${k} tDiff: ${timeDiff}`);
         }
         
         this.timer = Date.now();
