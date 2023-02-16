@@ -28,7 +28,6 @@ try {
 
 const hvac1 = new hvacLogic();
 
-
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
     dataBus.removeAllListeners();
