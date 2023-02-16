@@ -7,10 +7,10 @@ const baseTopic = "home/hvac/status/"
 
 class hvacLogic {
     constructor() {
-        this.mode = 'init';
+        this.mode = 'Off';
         this.step = 0;
         this.workerInterval = 1000;
-        this.fanMode = 'init';
+        this.fanMode = 'Auto';
         this.userMode = 'init';
         this.userFanMode = 'init';
         this.temperature = -150;
