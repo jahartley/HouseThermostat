@@ -16,10 +16,13 @@
 console.log("-------------------------------------------------");
 const {client, pigpio, dataBus} = require("./global.js");
 const hvacLogic = require("./hvacLogic.js");
-const hvac1 = new hvacLogic();
+
 
 
 pigpio.initialize();
+
+const hvac1 = new hvacLogic();
+
 
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
