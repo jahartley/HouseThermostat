@@ -1,7 +1,8 @@
 
 
 class Ema {
-    constructor(timePeriod) {
+    constructor(name, timePeriod) {
+        this.name = name;
         this.timePeriod = timePeriod;
         this.timer = 0;
         this.ema = 0;
@@ -27,7 +28,7 @@ class Ema {
             let emaValue = parseFloat((float * k)+(emaLast*(1-k)));
             this.ema = emaValue.toFixed(3);
         }
-        //console.log(`${this.name} ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
+        console.log(`${this.name} ema: ${this.ema} value: ${value} tDiff: ${Date.now()-this.timer}`);
         this.timer = Date.now();
         return this.ema;
     }

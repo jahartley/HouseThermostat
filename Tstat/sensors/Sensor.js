@@ -41,7 +41,7 @@ class Sensor {
         if (this.data.dataStore[property]?.value === undefined) this.data.dataStore[property].value = 0;
         if (this.data.dataStore[property]?.valueOld === undefined) this.data.dataStore[property].valueOld = 0;
         if (this.data.dataStore[property]?.emaPeriod === undefined) this.data.dataStore[property].emaPeriod = this.data.ema;
-        if (this.data.dataStore[property]?.ema === undefined) this.data.dataStore[property].ema = new Ema(this.data.dataStore[property].emaPeriod);
+        if (this.data.dataStore[property]?.ema === undefined) this.data.dataStore[property].ema = new Ema(this.data.name, this.data.dataStore[property].emaPeriod);
         if (this.data.dataStore[property]?.publish === undefined) this.data.dataStore[property].publish = this.data.publish;
         return true;
     }
@@ -55,6 +55,7 @@ class Sensor {
         this.dataStoreCheck(property);
         let { value, valueOld, publish } = this.data.dataStore[property];
         let ema = this.data.dataStore[property].ema.pushValue(value);
+
         dataBus.emit(`${this.data.name}/${property}/ema`, ema);
         if (sensorDefaults.mqttEma) client.publish(`home/hvac/${this.data.name}/${property}/ema`, ema.toString());
         if (now) {
