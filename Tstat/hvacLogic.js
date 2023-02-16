@@ -47,8 +47,8 @@ class hvacLogic {
         console.log(`HvacLogic setUserMode ${mode}`);
         if (!hvac.userModes.userModesNames.includes(mode)) throw new Error('Unknown mode');
         if (this.userMode === mode) return;
-        client.publish(baseTopic + "userMode", this.userMode);
         this.userMode = mode;
+        client.publish(baseTopic + "userMode", this.userMode);
         this.tempLogicWorker(this.temperature);
     }
     tempLogicWorker(temp) {
