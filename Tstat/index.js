@@ -20,7 +20,10 @@ const hvacLogic = require("./hvacLogic.js");
 
 try {
     pigpio.initialize();
-} catch (err) {console.trace(err);}
+} catch (err) {
+    console.log("************************PIGPIO STARTUP ERROR REBOOT PI*********************************");
+    console.trace(err);
+}
 
 const hvac1 = new hvacLogic();
 
