@@ -36,7 +36,9 @@ const gracefulShutdown = () => {
     clearInterval(watchdog);
     client.publish('home/pi64', 'shutdown');
     client.end();
+    console.log("pigpio terminate");
     pigpio.terminate();
+    console.log("complete");
     //setTimeout(() => {console.log("Stopping pigpio"); pigpio.terminate();}, 5000);
     setTimeout(() => {console.log("Terminating"); process.exit();}, 8000);
 
