@@ -20,9 +20,13 @@ class DsTs extends Sensor {
             console.log(`DsTs found ${this.sensors.length} devices. Init Complete`);
         } catch (err) {this.errorHandler(err, `${this.type} init`);}
     }
-    close() {
+    shutDown() {
         if (this.interval) clearInterval(this.interval);
         console.log(`${this.type} ${this.data.name} shutdown`);
+    }
+    restart() {
+        this.shutDown();
+        this.init();
     }
     async readTemps() {
         try {

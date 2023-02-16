@@ -142,6 +142,9 @@ class hvacLogic {
         for (let interval in this.intervals) {
             if (this.intervals[interval]) clearInterval(this.intervals[interval]);
         }
+        for (let item in this.sensors) {
+            this.sensors[item].shutDown();
+        }
         for (let item in this.machines) {
             this.machines[item].shutDown();
         }

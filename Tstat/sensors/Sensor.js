@@ -76,6 +76,9 @@ class Sensor {
             client.publish(`home/hvac/${this.data.name}/${property}`, value.toString());
         }
     }
+    shutDown(){
+        console.log(`${this.data.name} generic shutdown`);
+    }
 }
 
 module.exports = Sensor

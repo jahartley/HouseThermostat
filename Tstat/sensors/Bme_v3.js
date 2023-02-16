@@ -19,13 +19,13 @@ class Bme extends Sensor {
             this.interval = setInterval(async () => {this.read()} ,this.data.rate);
         } catch (err) {this.errorHandler(err, "init");}
     }
-    close() {
+    shutDown() {
         if (this.interval) clearInterval(this.interval);
         console.log(`BME ${this.data.name} shutdown`);
     }
     async restart() {
         try {
-            this.close();
+            this.shutDown();
             await this.bmeObj.reset();
             await this.init();
         } catch (err) {this.errorHandler(err, "restart");}

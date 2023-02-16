@@ -9,12 +9,13 @@ const hvac = {};
 
 // Hvac routines. Baised of my ac and furnace system. Furnce controls fan so set fan idle before heat prevents
 // fan from rapid cycling.
+// delay: mandatory delay
 
 hvac.routines = {
     heat: {
         0: {func: 'cool', opt: 'idle'},
         1: {func: 'fan', opt: 'idle'}, //set fan idle and delay to prevent fan motor fast cycling.
-        2: {func: 'delay', opt: 30000},
+        2: {func: 'delay', opt: 10000},
         3: {func: 'heat', opt: 'run'},
         4: {func: 'delay', opt: 30000},
         5: {func: 'fan', opt: 'run'}, //set fan run so that it has a longer cool down controlled by off routine.

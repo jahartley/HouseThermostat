@@ -53,14 +53,14 @@ class Serial extends Sensor {
             console.log("Serial initialized");
         } catch (err) {this.errorHandler(err, `init`);}
     }
-    close = function() {
+    shutDown() {
         try {
             this.port.close();
             console.log("Serial shutdown");
         } catch (err) {this.errorHandler(err, `close`);}
     }
     restart() {
-        this.close();
+        this.shutDown();
         this.init();
     }
 }
