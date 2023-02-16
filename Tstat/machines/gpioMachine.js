@@ -23,12 +23,12 @@ class GpioMachine extends Machine {
         console.log(`${this.data.name} init complete`);
     }
     stop() {
-        console.log(this.gpio.digitalWrite(deviceOff));
+        console.log(this.gpio.digitalWrite(this.data.deviceOff));
         super.stop();
         return true;
     }
     start() {
-        console.log(this.gpio.digitalWrite(deviceOn));
+        console.log(this.gpio.digitalWrite(this.data.deviceOn));
         super.start();
         return true;
     }
