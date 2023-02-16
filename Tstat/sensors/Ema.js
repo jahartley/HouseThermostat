@@ -3,7 +3,7 @@
 class Ema {
     constructor(name, timePeriod) {
         this.name = name;
-        this.timePeriod = timePeriod;
+        this.timePeriod = +timePeriod;
         this.timer = 0;
         this.ema = 0;
     }
@@ -21,9 +21,9 @@ class Ema {
             this.ema = float.toFixed(3);
         } else {
             let emaLast = parseFloat(this.ema);
-            let timeDiff = Date.now-this.timer;
+            let timeDiff = Date.now - +this.timer;
             //weight = 2/(no of observations+1)
-            let k = 2/(this.timePeriod-timeDiff+1);
+            let k = 2/(+this.timePeriod - +timeDiff + 1);
             //console.log(emaLast, float, (float-emaLast), this.weight, (float-emaLast)*this.weight, (float-emaLast)*this.weight+emaLast );
             let emaValue = parseFloat((float * k)+(emaLast*(1-k)));
             this.ema = emaValue.toFixed(3);
