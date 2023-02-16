@@ -12,7 +12,7 @@ const hvac = {};
 // delay: mandatory delay
 
 hvac.routines = {
-    heat: {
+    Heat: {
         0: {func: 'cool', opt: 'idle'},
         1: {func: 'fan', opt: 'idle'}, //set fan idle and delay to prevent fan motor fast cycling.
         2: {func: 'delay', opt: 10000},
@@ -21,14 +21,14 @@ hvac.routines = {
         5: {func: 'fan', opt: 'run'}, //set fan run so that it has a longer cool down controlled by off routine.
         6: {func: 'complete', opt: ''}
     },
-    cool: {
+    Cool: {
         0: {func: 'heat', opt: 'idle'},
         1: {func: 'fan', opt: 'run'},
         2: {func: 'delay', opt: 15000},
         3: {func: 'cool', opt: 'run'},
         4: {func: 'complete', opt: ''}
     },
-    off: {
+    Off: {
         0: {func: 'heat', opt: 'idle'},
         1: {func: 'cool', opt: 'idle'},
         2: {func: 'delay', opt: 15000}, //fan off delay change value baised on duct work cool down.
@@ -46,17 +46,17 @@ hvac.setpoints = {
 }
 
 hvac.systemModes = {
-    systemModeNames: ['off', 'cool', 'heat']
+    systemModeNames: ['Off', 'Cool', 'Heat']
 };
 
 hvac.userModes = {
-    userModesNames: ['off', 'cool', 'heat', 'auto'],
-    userFanModesNames: ['auto', 'on', 'circ']
+    userModesNames: ['Off', 'Cool', 'Heat', 'Auto'],
+    userFanModesNames: ['Auto', 'On', 'Circulate']
 };
 
 hvac.fanModes = {
-    fanModeNames: ['auto', 'on', 'circOn'],
-    fanRequiredModes: ['cool', 'heat'],
+    fanModeNames: ['Auto', 'On', 'CircOn'],
+    fanRequiredModes: ['Cool', 'Heat'],
     circMode: {onTime: 10000, inTime: 30000} //circ setting 1 min on every 5min.
 };
 

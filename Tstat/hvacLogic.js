@@ -3,23 +3,23 @@ const hvacBuilder = require("./hvacBuilder.js");
 
 // system run modes specifed in hvac.routines
 // fan modes on, auto, circ. circ set to minimum 5 min in 30min period.
+const baseTopic = "home/hvac/status/"
 
 class hvacLogic {
     constructor() {
-        this.tempmode = 'off';
         this.mode = 'init';
         this.step = 0;
         this.workerInterval = 1000;
-        this.fanMode = 'auto';
-        this.userMode = 'auto';
-        this.userFanMode = 'auto';
+        this.fanMode = 'Auto';
+        this.userMode = 'Auto';
+        this.userFanMode = 'Auto';
         this.temperature = -150;
         this.intervals = {};
         this.machines = {};
         this.sensors = {};
         this.equipmentBuilder("machines");
         this.equipmentBuilder("sensors");
-        this.setMode('off');
+        this.setMode('Off');
     }
     equipmentBuilder(location) {        
         for (let item in hvac[location]) {
@@ -41,14 +41,15 @@ class hvacLogic {
         console.log(`HvacLogic setUserMode ${mode}`);
         if (!hvac.userModes.userModesNames.includes(mode)) throw new Error('Unknown mode');
         if (this.userMode === mode) return;
+        client.publish(baseTopic + "userMode", this.userMode);
         this.userMode = mode;
         this.tempLogicWorker(this.temperature);
     }
     tempLogicWorker(temp) {
 
         //calls setMode baised on temp and userMode.
-        if (this.userMode === 'off') {
-            this.setMode('off');
+        if (this.userMode === 'Off') {
+            this.setMode('Off');
             return;
         }
         let coolSetpoint = 0;
@@ -73,23 +74,23 @@ class hvacLogic {
         // if (heatOn < 0) {if (this.tempmode === 'off') {this.tempmode = 'heat'; mode = "yes";}};
         //console.log("tempLogic Worker temp, cOff, hOff, cOn, hOn", temp, "\t", coolOff, "\t", heatOff, "\t", coolOn, "\t", heatOn, "\t", this.tempmode, "\t", mode, (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
         
-        if (this.userMode === 'auto') {
-            if (coolOff < 0) {if (this.mode === 'cool') return this.setMode('off')};
-            if (heatOff < 0) {if (this.mode === 'heat') return this.setMode('off')};
-            if (coolOn < 0) {if (this.mode === 'off') return this.setMode('cool')};
-            if (heatOn < 0) {if (this.mode === 'off') return this.setMode('heat')};
+        if (this.userMode === 'Auto') {
+            if (coolOff < 0) {if (this.mode === 'Cool') return this.setMode('Off')};
+            if (heatOff < 0) {if (this.mode === 'Heat') return this.setMode('Off')};
+            if (coolOn < 0) {if (this.mode === 'Off') return this.setMode('Cool')};
+            if (heatOn < 0) {if (this.mode === 'Off') return this.setMode('Heat')};
             return;
         }
-        if (this.userMode === 'cool') {
-            if (this.mode === 'heat') return this.setMode('off');
-            if (coolOff < 0) {if (this.mode === 'cool') return this.setMode('off')};
-            if (coolOn < 0) {if (this.mode === 'off') return this.setMode('cool')};
+        if (this.userMode === 'Cool') {
+            if (this.mode === 'Heat') return this.setMode('Off');
+            if (coolOff < 0) {if (this.mode === 'Cool') return this.setMode('Off')};
+            if (coolOn < 0) {if (this.mode === 'Off') return this.setMode('Cool')};
             return;
         }
-        if (this.userMode === 'heat') {
-            if (this.mode === 'cool') return this.setMode('off')
-            if (heatOff < 0) {if (this.mode === 'heat') return this.setMode('off')};
-            if (heatOn < 0) {if (this.mode === 'off') return this.setMode('heat')};
+        if (this.userMode === 'Heat') {
+            if (this.mode === 'Cool') return this.setMode('Off')
+            if (heatOff < 0) {if (this.mode === 'Heat') return this.setMode('Off')};
+            if (heatOn < 0) {if (this.mode === 'Off') return this.setMode('Heat')};
             return;
         }
     } 
@@ -100,6 +101,7 @@ class hvacLogic {
         if (this.intervals.modeWorkerInterval) clearInterval(this.intervals.modeWorkerInterval);
         this.step = 0;
         this.mode = mode;
+        client.publish(baseTopic + "mode", this.mode);
         this.intervals.modeWorkerInterval = setInterval(() => this.modeWorker(), this.workerInterval);
         return;
     }
@@ -120,7 +122,7 @@ class hvacLogic {
         }
         //take fanMode into account.
         if (func === 'fan') {
-            if (this.fanMode !== 'auto' && this.mode === 'off') { //prevent fan turn off. during off mode if fan on/circ.
+            if (this.fanMode !== 'Auto' && this.mode === 'Off') { //prevent fan turn off. during off mode if fan on/circ.
                 this.step++;
                 return;
             }
@@ -148,6 +150,11 @@ class hvacLogic {
         for (let item in this.machines) {
             this.machines[item].shutDown();
         }
+        
+        client.publish(baseTopic + "mode", "Off");
+        client.publish(baseTopic + "fanMode", "Auto");
+        client.publish(baseTopic + "userMode", "Off");
+        client.publish(baseTopic + "userFanMode", "Auto");
         return;
     }
     async setFanMode(mode) {
@@ -155,10 +162,11 @@ class hvacLogic {
         if (!hvac.fanModes.fanModeNames.includes(mode)) throw new Error('setFanMode Unknown mode');
         if (this.fanMode === mode) return;
         this.fanMode = mode;
+        client.publish(baseTopic + "fanMode", this.fanMode);
         this.intervals.fanModeWorkerInterval = setInterval(() => this.fanModeWorker(), this.workerInterval);
     }
     async fanModeWorker() {
-        if (this.fanMode === 'auto') {
+        if (this.fanMode === 'Auto') {
             if (hvac.fanModes.fanRequiredModes.includes(this.mode)) { 
                 //fan required in this mode will be turned off automaticlly.
                 if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
@@ -178,7 +186,7 @@ class hvacLogic {
         } else return;
     }
     fanCircStarter() {
-        this.setFanMode('auto');
+        this.setFanMode('Auto');
         this.fanCircWorkerTime = this.currentMachineRunTime('fan');
         this.intervals.fanCircStarterInterval = setTimeout(() => this.fanCircStarter(), (hvac.fanModes.circMode.inTime));
         this.intervals.fanCircWorkerInterval = setTimeout(() => this.fanCircWorker(), hvac.fanModes.circMode.inTime-hvac.fanModes.circMode.onTime);
@@ -191,8 +199,8 @@ class hvacLogic {
         let needed = hvac.fanModes.circMode.onTime-delta;
         console.log("fanCircWorker d n", delta, needed);
         if (delta > hvac.fanModes.circMode.onTime) return;
-        this.setFanMode('circOn');
-        this.intervals.fanCircWorkerTimeout = setTimeout(() => this.setFanMode('auto'), needed);
+        this.setFanMode('CircOn');
+        this.intervals.fanCircWorkerTimeout = setTimeout(() => this.setFanMode('Auto'), needed);
     }
     fanCircCancel() {
         if (this.intervals.fanCircStarterInterval) clearInterval(this.intervals.fanCircStarterInterval);
@@ -212,6 +220,7 @@ class hvacLogic {
         if (!hvac.userModes.userFanModesNames.includes(mode)) throw new Error('setFanMode Unknown mode');
         if (this.userFanMode === mode) return;
         this.userFanMode = mode;
+        client.publish(baseTopic + "userFanMode", this.userFanMode);
         if (mode === 'circ') {
             this.fanCircStarter();
             return;
@@ -220,12 +229,18 @@ class hvacLogic {
         this.setFanMode(mode);
     }
     resend() {
+        //send all modes/states
         for (let i in this.sensors) {
             this.sensors[i].resend();
         }
         for (let i in this.machines) {
             this.machines[i].resend();
         }
+
+        client.publish(baseTopic + "mode", this.mode);
+        client.publish(baseTopic + "fanMode", this.fanMode);
+        client.publish(baseTopic + "userMode", this.userMode);
+        client.publish(baseTopic + "userFanMode", this.userFanMode);
     }
 }
 
