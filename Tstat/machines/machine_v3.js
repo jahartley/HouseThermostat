@@ -114,6 +114,7 @@ class Machine {
         console.log(`Stopping ${this.data.name} NOW!`);
         this.shutdownNow = true;
         this.stop();
+        this.eventEmit(this.data.initialState);
     }
     resend() {
         if (this?.state === undefined) return;
