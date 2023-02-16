@@ -23,12 +23,10 @@ class Ema {
             let emaLast = parseFloat(this.ema);
             let timeDiff = Date.now() - +this.timer;
             //weight = 2/(no of observations+1)
+            //weight = 2/(timePeriod/interval + 1)
             let k = 2/((this.timePeriod / timeDiff) + 1);
-            //console.log(emaLast, float, (float-emaLast), this.weight, (float-emaLast)*this.weight, (float-emaLast)*this.weight+emaLast );
             let emaValue = parseFloat((float * k)+(emaLast*(1-k)));
             this.ema = emaValue.toFixed(3);
-            console.log(`${this.name} timePeriod ${this.timePeriod} timer ${this.timer} $ k: ${k} tDiff: ${timeDiff}`);
-            console.log(`${this.name} value ${value} ema: ${this.ema} emaValue: ${emaValue} emaLast: ${emaLast} k: ${k} tDiff: ${timeDiff}`);
         }
         
         this.timer = Date.now();
