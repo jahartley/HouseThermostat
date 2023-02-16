@@ -18,8 +18,9 @@ const {client, pigpio, dataBus} = require("./global.js");
 const hvacLogic = require("./hvacLogic.js");
 
 
-
-pigpio.initialize();
+try {
+    pigpio.initialize();
+} catch (err) {console.trace(err);}
 
 const hvac1 = new hvacLogic();
 
