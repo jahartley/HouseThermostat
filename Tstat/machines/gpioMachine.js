@@ -17,7 +17,7 @@ class GpioMachine extends Machine {
         //console.log(`${this.data.name} setup. init pin ${this.data.pin}`);
         if (this.data?.deviceOn === undefined) this.data.deviceOn = gpioDefaults.deviceOn;
         if (this.data?.deviceOff === undefined) this.data.deviceOff = gpioDefaults.deviceOff;
-        this.gpio = new Gpio(this.pin, {mode: Gpio.OUTPUT});
+        this.gpio = new Gpio(this.data.pin, {mode: Gpio.OUTPUT});
         if (!this[this.data.initialFunc]()) throw new Error(`${this.data.name} init failed!`);
         this.state = this.data.initialState;
         console.log(`${this.data.name} init complete`);
