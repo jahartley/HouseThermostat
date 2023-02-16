@@ -23,6 +23,8 @@ class hvacLogic {
         client.publish(baseTopic + "fanMode", this.fanMode);
         client.publish(baseTopic + "userMode", this.userMode);
         client.publish(baseTopic + "userFanMode", this.userFanMode);
+        this.setUserMode('Auto');
+        this.setUserFanMode('Auto');
     }
     equipmentBuilder(location) {        
         for (let item in hvac[location]) {
