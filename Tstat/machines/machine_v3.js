@@ -1,5 +1,5 @@
 
-const {client, dataBus} = require("./global.js");
+const {client, dataBus} = require("../global.js");
 
 const testOptions = {
     name: 'fan',
