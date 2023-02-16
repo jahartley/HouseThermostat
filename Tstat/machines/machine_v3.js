@@ -79,6 +79,7 @@ class Machine {
             }
         }
         this.state = this.data.states[this.state][req].success;
+        this.eventEmit(this.state);
         //console.log(`${this.data.name} poll request ${req} Moved to new state ${this.state} SUCCESS`);
         return true;
     }
@@ -87,7 +88,7 @@ class Machine {
         for (let timer in this.data.timers) {
             this.data.timers[timer] = Date.now();
         }
-        console.log(`${this.data.name} Machine init complete`);
+        console.log(`Machine ${this.data.name} init complete`);
     }
     delay(options){
         let lastTime = this.data.timers[options.timer];
@@ -97,14 +98,12 @@ class Machine {
     stop(){
         this.data.timers.idle = Date.now();
         if (this.state !== 'idle') this.data.accumulators.run = this.data.accumulators.run + (Date.now() - this.data.timers.run);
-        //console.log(`@${this.data.name} run time ${this.data.accumulators.run/1000} seconds`);
-        this.eventEmit('off');
+        console.log(`Machine Stop @${this.data.name} run time ${this.data.accumulators.run/1000} seconds`);
     }
     start(){
         this.data.timers.run = Date.now();
         if (this.state !== 'run') this.data.accumulators.idle = this.data.accumulators.idle + (Date.now() - this.data.timers.idle);
-        //console.log(`@${this.data.name} idle time ${this.data.accumulators.idle/1000} seconds`);
-        this.eventEmit('on');
+        console.log(`Machine Start @${this.data.name} idle time ${this.data.accumulators.idle/1000} seconds`);
     }
     eventEmit(msg) {
         client.publish(`home/hvac/machines/${this.data.name}`, msg);
@@ -115,6 +114,10 @@ class Machine {
         console.log(`Stopping ${this.data.name} NOW!`);
         this.shutdownNow = true;
         this.stop();
+    }
+    resend() {
+        if (this?.state === undefined) return;
+        client.publish(`home/hvac/machines/${this.data.name}`, this.state);
     }
 }
 

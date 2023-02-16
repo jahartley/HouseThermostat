@@ -216,6 +216,14 @@ class hvacLogic {
         this.fanCircCancel();
         this.setFanMode(mode);
     }
+    resend() {
+        for (let i in this.sensors) {
+            this.sensors[i].resend();
+        }
+        for (let i in this.machines) {
+            this.machines[i].resend();
+        }
+    }
 }
 
 module.exports = hvacLogic;

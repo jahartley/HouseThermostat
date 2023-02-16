@@ -12,12 +12,12 @@ class SimMachine extends Machine {
         console.log(`${this.data.name} SimMachine init complete`);
     }
     stop() {
-        console.log(`@${this.data.name} setting pin to off`);
+        console.log(`@${this.data.name} SimMachine setting pin to off`);
         super.stop();
         return true;
     }
     start() {
-        console.log(`@${this.data.name} setting pin to on`);
+        console.log(`@${this.data.name} SimMachine setting pin to on`);
         super.start();
         return true;
     }
