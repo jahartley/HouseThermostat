@@ -19,7 +19,10 @@ class hvacLogic {
         this.sensors = {};
         this.equipmentBuilder("machines");
         this.equipmentBuilder("sensors");
-        this.setMode('Off');
+        client.publish(baseTopic + "mode", this.mode);
+        client.publish(baseTopic + "fanMode", this.fanMode);
+        client.publish(baseTopic + "userMode", this.userMode);
+        client.publish(baseTopic + "userFanMode", this.userFanMode);
     }
     equipmentBuilder(location) {        
         for (let item in hvac[location]) {
