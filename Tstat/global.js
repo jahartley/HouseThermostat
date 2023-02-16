@@ -367,7 +367,7 @@ hvac.sensors = {
         neededClass: "Bme",
         bmeOptions: {
             i2cBusNo: 1,
-            i2cAddress: 0x76
+            i2cAddress: 0x77
         },
         dataStore: {
             temperature: {
@@ -390,7 +390,7 @@ hvac.sensors = {
         neededClass: "Bme",
         bmeOptions: {
             i2cBusNo: 1,
-            i2cAddress: 0x77
+            i2cAddress: 0x76
         },
         dataStore: {
             temperature: {
