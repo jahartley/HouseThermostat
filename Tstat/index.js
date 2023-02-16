@@ -23,6 +23,7 @@ try {
 } catch (err) {
     console.log("************************PIGPIO STARTUP ERROR REBOOT PI*********************************");
     console.trace(err);
+    gracefulShutdown();
 }
 
 const hvac1 = new hvacLogic();
