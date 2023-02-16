@@ -13,6 +13,7 @@ class hvacBuilder {
         const hvacClasses = {
             SimMachine, Machine, Bme, DsTs, Serial, GpipMachine,
         };
+        console.log(options);
         return new hvacClasses[options.neededClass](options);
     }
 }
