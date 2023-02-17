@@ -219,6 +219,47 @@ hvac.machines = {
             run: 0,
         }
     },
+    99: {
+        name: 'failSafe',
+        neededClass: 'GpioMachine',
+        pin: 21,
+        deviceOn: 0,
+        deviceOff: 1,
+        initialState: 'idle',
+        initialFunc: 'stop',
+        states: {
+            idle: {
+                run: {
+                    actions: {
+                        0: {
+                            func: 'start'
+                        }
+                    },
+                    success: 'run',
+                    fail: 'idle'
+                }
+            },
+            run: {
+                idle: {
+                    actions: {
+                        0: {
+                            func: 'stop'
+                        }
+                    },
+                    success: 'idle',
+                    fail: 'run'
+                }
+            }
+        },
+        timers: {
+            idle: 0,
+            run: 0,
+        },
+        accumulators: {
+            idle: 0,
+            run: 0,
+        }
+    },
 };
 
 hvac.fanOptions = {
