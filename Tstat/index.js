@@ -110,20 +110,20 @@ const watchdog = setInterval(() => {
     client.publish('home/pi64', 'ok');
 }, 300000);
 
-class tempSorter {
-    constructor() {
-        this.primaryTempName = "Hallway/temperature/ema";
-        this.backupTempName = "Hallway/BME680temperature/ema";
-    }
-    pushValue(name, value) {
-        if (name === this.primaryTempName) hvac1.tempLogicWorker(parseFloat(value));
-    }
-}
+// class tempSorter {
+//     constructor() {
+//         this.primaryTempName = "Hallway/temperature/ema";
+//         this.backupTempName = "Hallway/BME680temperature/ema";
+//     }
+//     pushValue(name, value) {
+//         if (name === this.primaryTempName) hvac1.tempLogicWorker(parseFloat(value));
+//     }
+// }
 
 
 
-dataBus.on("Hallway/temperature/ema", (temp) => {
-    hvac1.tempLogicWorker(parseFloat(temp));
-});
+// dataBus.on("Hallway/temperature/ema", (temp) => {
+//     hvac1.tempLogicWorker(parseFloat(temp));
+// });
 
 

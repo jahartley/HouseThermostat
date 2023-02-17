@@ -1,4 +1,4 @@
-const {client, dataBus} = require("./global.js");
+const {client, dataBus} = require("../global.js");
 const { Ema } = require("../sensors/Ema.js");
 
 class ductPressureMonitor {

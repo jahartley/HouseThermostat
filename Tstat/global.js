@@ -60,10 +60,17 @@ hvac.fanModes = {
     circMode: {onTime: 10000, inTime: 30000} //circ setting 1 min on every 5min.
 };
 
+hvac.listeners = {
+    tempWorker: {
+        listen: "Hallway/temperature/ema",
+        func: "tempLogicWorker"
+    }
+};
+
 hvac.machines = {
     0: {
         name: 'fan',
-        neededClass: 'SimMachine',
+        neededClass: 'GpioMachine',
         pin: 5,
         deviceOn: 0,
         deviceOff: 1,
@@ -111,7 +118,7 @@ hvac.machines = {
     },
     1: {
         name: 'heat',
-        neededClass: 'SimMachine',
+        neededClass: 'GpioMachine',
         pin: 6,
         deviceOn: 0,
         deviceOff: 1,
@@ -159,7 +166,7 @@ hvac.machines = {
     },
     2: {        
         name: 'cool',
-        neededClass: 'SimMachine',
+        neededClass: 'GpioMachine',
         pin: 13,
         deviceOn: 0,
         deviceOff: 1,

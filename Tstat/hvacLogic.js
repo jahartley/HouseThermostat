@@ -17,6 +17,7 @@ class hvacLogic {
         this.intervals = {};
         this.machines = {};
         this.sensors = {};
+        this.listeners = {};
         this.equipmentBuilder("machines");
         this.equipmentBuilder("sensors");
         client.publish(baseTopic + "mode", this.mode);
@@ -28,9 +29,14 @@ class hvacLogic {
 
     }
     equipmentBuilder(location) {        
-        for (let item in hvac[location]) {
+        for (const item in hvac[location]) {
             if (hvac[location][item]?.neededClass === undefined) continue;
             this[location][hvac[location][item].name] = new hvacBuilder(hvac[location][item]);
+        }
+    }
+    listenerBuilder() {
+        for (const item in hvac.listeners) {
+            dataBus.on(hvac.listeners[item].listen, (value) => this[hvac.listeners[item].func](value));
         }
     }
     setSetPoints(cool, heat) {
