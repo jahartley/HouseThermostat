@@ -95,10 +95,10 @@ client.on('message', function(topic, message) {
       hvac1.resend();
     }
     if (topic.toString() == 'home/hvac/control/userFanMode') {
-        hvac1.setUserFanMode(message);
+        hvac1.setUserFanMode(message.toString());
     }
     if (topic.toString() == 'home/hvac/control/userMode') {
-        hvac1.setUserMode(message);
+        hvac1.setUserMode(message.toString());
     }
 
 });
