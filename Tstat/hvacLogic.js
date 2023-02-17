@@ -20,6 +20,7 @@ class hvacLogic {
         this.listeners = {};
         this.equipmentBuilder("machines");
         this.equipmentBuilder("sensors");
+        this.listenerBuilder();
         this.setUserMode('Auto');
         this.setUserFanMode('Auto');
         this.resend();
