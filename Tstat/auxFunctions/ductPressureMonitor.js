@@ -29,20 +29,20 @@ class ductPressureMonitor {
         dataBus.on("DuctAfterHVAC/pressure", (value) => {this.p2(value);});
     }
     fanOn(){
-        console.log("duct fan on ignore.");
+        //console.log("duct fan on ignore.");
         this.fanState = "ignore";
         clearTimeout(this.interval);
         this.interval = setTimeout(() => {
-            console.log("duct start using fan");
+            //console.log("duct start using fan");
             this.fanState = "run";
         }, this.onDelay);
     }
     fanOff(){
-        console.log("duct fan off ignore");
+        //console.log("duct fan off ignore");
         this.fanState = "ignore";
         clearTimeout(this.interval);
         this.interval = setTimeout(() => {
-            console.log("duct fan stop");
+            //console.log("duct fan stop");
             this.fanState = "idle";
         }, this.offDelay);
     }
@@ -77,7 +77,7 @@ class ductPressureMonitor {
         if (p1 === null) return;
         if (p2 === null) return;
         if (EoffDiff === null) return;
-        console.log("on diff value", (p2-EoffDiff-p1));
+        //console.log("on diff value", (p2-EoffDiff-p1));
         this.emaOnDiff.pushValue(p2-EoffDiff-p1);
         this.report();
     }
@@ -86,17 +86,18 @@ class ductPressureMonitor {
         let p2 = this.emaP2Off.getValue();
         if (p1 === null) return;
         if (p2 === null) return;
-        console.log("off diff value", (p2-p1));
+        //console.log("off diff value", (p2-p1));
         this.emaOffDiff.pushValue(p2-p1);
     }
     report() {
         let current = this.emaOnDiff.getValue();
-        console.log("duct report current", current);
+        //console.log("duct report current", current);
         if (current === null) return;
         if (Date.now()-this.reportTimer < this.reportInterval) {
             if (Math.abs(current-this.reportLast) < this.reportDiff) return;
         }
         this.reportLast = current;
+        current = current * 0.401463;
         client.publish(`home/hvac/systemPressureDifference`, current.toString());
     }
 }
