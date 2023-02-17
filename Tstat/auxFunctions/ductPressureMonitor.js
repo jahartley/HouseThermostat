@@ -1,5 +1,5 @@
 const {client, dataBus} = require("../global.js");
-const { Ema } = require("../sensors/Ema.js");
+const Ema = require("../sensors/Ema.js");
 
 class ductPressureMonitor {
     // listen to pressure from duct, and fan. 
