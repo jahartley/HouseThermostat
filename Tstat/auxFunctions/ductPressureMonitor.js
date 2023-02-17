@@ -28,16 +28,20 @@ class ductPressureMonitor {
         dataBus.on("DuctAfterHVAC/pressure", (value) => {this.p2(value);});
     }
     fanOn(){
+        console.log("duct fan on ignore.");
         this.fanState = "ignore";
         clearTimeout(this.interval);
         this.interval = setTimeout(() => {
+            console.log("duct start using fan");
             this.fanState = "run";
         }, this.onDelay);
     }
     fanOff(){
+        console.log("duct fan off ignore");
         this.fanState = "ignore";
         clearTimeout(this.interval);
         this.interval = setTimeout(() => {
+            console.log("duct fan stop");
             this.fanState = "idle";
         }, this.offDelay);
     }
@@ -68,11 +72,12 @@ class ductPressureMonitor {
     onDiff(){
         let p1 = this.emaP1On.getValue();
         let p2 = this.emaP2On.getValue();
-        let offDiff = this.emaOffDiff.getValue();
+        let EoffDiff = this.emaOffDiff.getValue();
         if (p1 === null) return;
         if (p2 === null) return;
-        if (offDiff === null) return;
-        this.emaOnDiff.pushValue(p2-offDiff-p1);
+        if (EoffDiff === null) return;
+        console.log("on diff value", (p2-EoffDiff-p1));
+        this.emaOnDiff.pushValue(p2-EoffDiff-p1);
         this.report();
     }
     offDiff(){
@@ -80,10 +85,12 @@ class ductPressureMonitor {
         let p2 = this.emaP2Off.getValue();
         if (p1 === null) return;
         if (p2 === null) return;
+        console.log("off diff value", (p2-p1));
         this.emaOffDiff.pushValue(p2-p1);
     }
     report() {
         let current = this.emaOnDiff.getValue();
+        console.log("duct report current", current);
         if (current === null) return;
         if (Date.now()-this.reportTimer < this.reportInterval) {
             if (Math.abs(current-this.reportLast) < this.reportDiff) return;
