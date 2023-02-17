@@ -16,6 +16,7 @@
 console.log("-------------------------------------------------");
 const {client, pigpio, dataBus} = require("./global.js");
 const hvacLogic = require("./hvacLogic.js");
+const ductPressureMonitor = require("./auxFunctions/ductPressureMonitor.js");
 
 
 try {
@@ -27,6 +28,7 @@ try {
 }
 
 const hvac1 = new hvacLogic();
+const dpm = new ductPressureMonitor();
 
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
@@ -123,4 +125,5 @@ class tempSorter {
 dataBus.on("Hallway/temperature/ema", (temp) => {
     hvac1.tempLogicWorker(parseFloat(temp));
 });
+
 

@@ -5,14 +5,10 @@ class Ema {
         this.name = name;
         this.timePeriod = timePeriod;
         this.timer = 0;
-        this.ema = 0;
+        this.ema = null;
     }
     getValue () {
-        if (Date.now()-this.timer > this.timePeriod) {
-            return null;
-        } else {
             return this.ema;
-        }
     }
     pushValue(value) {
         let float = parseFloat(value);
