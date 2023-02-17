@@ -31,7 +31,7 @@ hvac.routines = {
     Off: {
         0: {func: 'heat', opt: 'idle'},
         1: {func: 'cool', opt: 'idle'},
-        2: {func: 'delay', opt: 15000}, //fan off delay change value baised on duct work cool down.
+        2: {func: 'delay', opt: 180000}, //fan off delay change value baised on duct work cool down.
         3: {func: 'fan', opt: 'idle'},
         4: {func: 'complete', opt: ''}
     }
@@ -40,7 +40,7 @@ hvac.routines = {
 hvac.setpoints = {
     cool: 77,
     heat: 73,
-    auto: 74,
+    auto: 73,
     minSeperation: 2,
     hysteresis: 1.0
 }
@@ -180,7 +180,7 @@ hvac.machines = {
                             func: 'delay',
                             options: {
                                 timer: 'idle',
-                                minTime: 30000
+                                minTime: 120000
                             }
                         },
                         1: {
@@ -198,7 +198,7 @@ hvac.machines = {
                             func: 'delay',
                             options: {
                                 timer: 'run',
-                                minTime: 30000
+                                minTime: 120000
                             }
                         },
                         0: {
