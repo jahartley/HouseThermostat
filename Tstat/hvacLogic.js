@@ -20,13 +20,9 @@ class hvacLogic {
         this.listeners = {};
         this.equipmentBuilder("machines");
         this.equipmentBuilder("sensors");
-        client.publish(baseTopic + "mode", this.mode);
-        client.publish(baseTopic + "fanMode", this.fanMode);
-        client.publish(baseTopic + "userMode", this.userMode);
-        client.publish(baseTopic + "userFanMode", this.userFanMode);
-        client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
         this.setUserMode('Auto');
         this.setUserFanMode('Auto');
+        this.resend();
 
     }
     equipmentBuilder(location) {        
