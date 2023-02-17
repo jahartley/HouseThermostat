@@ -57,7 +57,7 @@ hvac.userModes = {
 hvac.fanModes = {
     fanModeNames: ['Auto', 'On', 'CircOn'],
     fanRequiredModes: ['Cool', 'Heat'],
-    circMode: {onTime: 10000, inTime: 30000} //circ setting 1 min on every 5min.
+    circMode: {onTime: 300000, inTime: 1800000} //circ setting 5min every 30min
 };
 
 hvac.listeners = {

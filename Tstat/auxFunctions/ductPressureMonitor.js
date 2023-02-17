@@ -15,8 +15,8 @@ class ductPressureMonitor {
         this.emaP2Off = new Ema("eP2Off", 30000);
         this.emaP1On = new Ema("eP1On", 30000);
         this.emaP2On = new Ema("eP2On", 30000);
-        this.emaOffDiff = new Ema("eoffDiff", 43200000);
-        this.emaOnDiff = new Ema("eonDiff", 43200000);
+        this.emaOffDiff = new Ema("eoffDiff", 10800000);
+        this.emaOnDiff = new Ema("eonDiff", 10800000);
 
         this.reportDiff = 0.1;
         this.reportInterval = 180000;
