@@ -33,6 +33,7 @@ class hvacLogic {
     }
     listenerBuilder() {
         for (const item in hvac.listeners) {
+            console.log("listener Builder ", hvac.listeners[item].listen, hvac.listeners[item].func);
             dataBus.on(hvac.listeners[item].listen, (value) => this[hvac.listeners[item].func](value));
         }
     }
@@ -57,7 +58,6 @@ class hvacLogic {
         if (this.userMode === mode) return;
         this.userMode = mode;
         client.publish(baseTopic + "userMode", this.userMode);
-        this.tempLogicWorker(this.temperature);
     }
     tempLogicWorker(temp) {
 
