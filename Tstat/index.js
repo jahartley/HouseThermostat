@@ -84,6 +84,8 @@ process.on('uncaughtException', (err) => {
 
 client.on('connect', () => {
     client.subscribe('home/boss/resend');
+    client.subscribe('home/hvac/control/userFanMode');
+    client.subscribe('home/hvac/control/userMode');
     client.publish('home/pi64', 'ok');
 })
 
@@ -92,6 +94,13 @@ client.on('message', function(topic, message) {
       client.publish('home/pi64', 'ok');
       hvac1.resend();
     }
+    if (topic.toString() == 'home/hvac/control/userFanMode') {
+        hvac1.userFanMode(message);
+    }
+    if (topic.toString() == 'home/hvac/control/userMode') {
+        hvac1.userMode(message);
+    }
+
 });
 
 //watchdog
