@@ -49,7 +49,7 @@ class Sensor {
     save(property, value) {
         this.dataStoreCheck(property);
         this.data.dataStore[property].value = value;
-        console.log(`${this.data.name}/${property}`, value);
+        //console.log(`${this.data.name}/${property}`, value);
         dataBus.emit(`${this.data.name}/${property}`, value);
         this.publish(property);
     }

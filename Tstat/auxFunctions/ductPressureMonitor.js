@@ -22,6 +22,7 @@ class ductPressureMonitor {
         this.reportInterval = 180000;
         this.reportTimer = Date.now();
         this.reportLast = 0;
+        this.fanOff();
         dataBus.on("fan/run", () => {this.fanOn();});
         dataBus.on("fan/idle", () => {this.fanOff();});
         dataBus.on("DuctBeforeHVAC/pressure", (value) => {this.p1(value);});
