@@ -24,6 +24,7 @@ class hvacLogic {
         client.publish(baseTopic + "fanMode", this.fanMode);
         client.publish(baseTopic + "userMode", this.userMode);
         client.publish(baseTopic + "userFanMode", this.userFanMode);
+        client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
         this.setUserMode('Auto');
         this.setUserFanMode('Auto');
 
@@ -48,6 +49,10 @@ class hvacLogic {
         if (cool-hvac.setpoints.minSeperation < heat) return new Error(`need minimum ${hvac.setpoints.minSeperation} seperation between cool and heat`);
         hvac.setpoints.cool = cool;
         hvac.setpoints.heat = heat;
+    }
+    setSetPointAuto(value) {
+        hvac.setpoints.auto = value;
+        client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
     }
     setUserMode(mode) {
         console.log(`HvacLogic setUserMode ${mode}`);
@@ -253,6 +258,7 @@ class hvacLogic {
         client.publish(baseTopic + "fanMode", this.fanMode);
         client.publish(baseTopic + "userMode", this.userMode);
         client.publish(baseTopic + "userFanMode", this.userFanMode);
+        client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
     }
 }
 

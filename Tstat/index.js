@@ -102,6 +102,9 @@ client.on('message', function(topic, message) {
     if (topic.toString() == 'home/hvac/control/userMode') {
         hvac1.setUserMode(message.toString());
     }
+    if (topic.toString() == 'home/hvac/control/setpoint') {
+        hvac1.setSetPointAuto(parseFloat(message));
+    }
 
 });
 
