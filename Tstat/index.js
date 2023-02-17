@@ -88,6 +88,7 @@ client.on('connect', () => {
     client.subscribe('home/boss/resend');
     client.subscribe('home/hvac/control/userFanMode');
     client.subscribe('home/hvac/control/userMode');
+    client.subscribe('home/hvac/control/setpoint');
     client.publish('home/pi64', 'ok');
 })
 
