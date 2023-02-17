@@ -54,7 +54,7 @@ class hvacLogic {
     tempLogicWorker(temp) {
 
         //calls setMode baised on temp and userMode.
-        if (this.userMode === 'Off') {
+        if (this.userMode === 'Off' && this.mode != 'Off') {
             this.setMode('Off');
             return;
         }
@@ -227,7 +227,7 @@ class hvacLogic {
         if (this.userFanMode === mode) return;
         this.userFanMode = mode;
         client.publish(baseTopic + "userFanMode", this.userFanMode);
-        if (mode === 'circ') {
+        if (mode === 'Circulate') {
             this.fanCircStarter();
             return;
         }
