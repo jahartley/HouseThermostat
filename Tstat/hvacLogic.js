@@ -49,6 +49,7 @@ class hvacLogic {
     setSetPointAuto(value) {
         hvac.setpoints.auto = value;
         client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
+        console.log("setSetpoint Auto ", value, hvac.setpoints.auto);
     }
     setUserMode(mode) {
         console.log(`HvacLogic setUserMode ${mode}`);
