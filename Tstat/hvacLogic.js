@@ -86,7 +86,7 @@ class hvacLogic {
         // if (heatOff < 0) {if (this.tempmode === 'heat') {this.tempmode = 'off'; mode = "yes";}};
         // if (coolOn < 0) {if (this.tempmode === 'off') {this.tempmode = 'cool'; mode = "yes";}};
         // if (heatOn < 0) {if (this.tempmode === 'off') {this.tempmode = 'heat'; mode = "yes";}};
-        //console.log("tempLogic Worker temp, cOff, hOff, cOn, hOn", temp, "\t", coolOff, "\t", heatOff, "\t", coolOn, "\t", heatOn, "\t", this.tempmode, "\t", mode, (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
+        console.log("tempLogic Worker temp, cOff, hOff, cOn, hOn", temp, "\t", coolOff, "\t", heatOff, "\t", coolOn, "\t", heatOn, "\t", this.tempmode, "\t", mode, (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
         
         if (this.userMode === 'Auto') {
             if (coolOff < 0) {if (this.mode === 'Cool') return this.setMode('Off')};
