@@ -5,7 +5,7 @@ const sensorDefaults = {
     dataRate: 10000,
     ema: 60000,
     publish: 0.2,
-    mqttEma: true
+    mqttEma: false
 };
 
 class Sensor {

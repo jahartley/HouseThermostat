@@ -61,7 +61,7 @@ class ductPressureMonitor {
                 break;
             case "idle":
                 this.emaP2Off.pushValue(value);
-                this.emaOffDiff();
+                this.OffDiff();
                 break;
         }
     }
