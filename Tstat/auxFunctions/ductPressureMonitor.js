@@ -11,12 +11,12 @@ class ductPressureMonitor {
         this.fanState = "init"; //states init, ignore, run, idle
         this.interval = null;
 
-        this.emaP1Off = new Ema("P1Off", 30000);
-        this.emaP2Off = new Ema("P2Off", 30000);
-        this.emaP1On = new Ema("P1On", 30000);
-        this.emaP2On = new Ema("P2On", 30000);
-        this.emaOffDiff = new Ema("offDiff", 43200000);
-        this.emaOnDiff = new Ema("onDiff", 43200000);
+        this.emaP1Off = new Ema("eP1Off", 30000);
+        this.emaP2Off = new Ema("eP2Off", 30000);
+        this.emaP1On = new Ema("eP1On", 30000);
+        this.emaP2On = new Ema("eP2On", 30000);
+        this.emaOffDiff = new Ema("eoffDiff", 43200000);
+        this.emaOnDiff = new Ema("eonDiff", 43200000);
 
         this.reportDiff = 0.1;
         this.reportInterval = 180000;
@@ -61,7 +61,7 @@ class ductPressureMonitor {
                 break;
             case "idle":
                 this.emaP2Off.pushValue(value);
-                this.OffDiff();
+                this.offDiff();
                 break;
         }
     }
