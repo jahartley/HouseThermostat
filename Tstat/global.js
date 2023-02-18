@@ -456,10 +456,10 @@ hvac.sensors = {
             }
         }
     },
-    2: {
-        name: "Line Temps",
-        neededClass: "DsTs",
-    },
+    // 2: {
+    //     name: "Line Temps",
+    //     neededClass: "DsTs",
+    // },
     3: {
         name: "Hallway",
         neededClass: "Serial",        
