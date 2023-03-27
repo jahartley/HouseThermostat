@@ -15,9 +15,9 @@ hvac.routines = {
     Heat: {
         0: {func: 'cool', opt: 'idle'},
         1: {func: 'fan', opt: 'idle'}, //set fan idle and delay to prevent fan motor fast cycling.
-        2: {func: 'delay', opt: 10000},
+        2: {func: 'delay', opt: 20000},
         3: {func: 'heat', opt: 'run'},
-        4: {func: 'delay', opt: 60000},
+        4: {func: 'delay', opt: 80000},
         5: {func: 'fan', opt: 'run'}, //set fan run so that it has a longer cool down controlled by off routine.
         6: {func: 'complete', opt: ''}
     },

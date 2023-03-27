@@ -24,6 +24,7 @@ class Serial extends Sensor {
                     Time 0:52:36
             
                 */
+               console.log(header);
                 switch(header) {
                     case 't':
                         this.save('temperature', parseFloat(newData.slice(1,newData.length-1)));
