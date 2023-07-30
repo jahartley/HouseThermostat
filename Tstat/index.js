@@ -1,6 +1,3 @@
-
-
-
 /*
     events start stop.
 
