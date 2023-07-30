@@ -1,5 +1,6 @@
 
 
+
 class Ema {
     constructor(name, timePeriod) {
         this.name = name;
