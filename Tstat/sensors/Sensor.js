@@ -1,3 +1,4 @@
+
 const {client, dataBus} = require("../global.js");
 const Ema = require('./Ema.js');
 
