@@ -127,6 +127,11 @@ let lastTime = Math.floor(Date.now() / 1000);
 dataBus.on("Hallway/temperature/ema", (temp) => {
     lastTime = Math.floor(Date.now() / 1000);
 });
+
+dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {
+    console.log(temp);
+});
+
 const watchdog2 = setInterval(() => {
     if (Math.floor(Date.now() / 1000)-45 > lastTime) {
         console.log("************************ WATCHDOG 2 FAIL RESTART TSTAT *********************************");
