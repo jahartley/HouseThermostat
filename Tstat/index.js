@@ -22,6 +22,7 @@ const {client, pigpio, dataBus, globalStatus} = require("./global.js");
 const hvacLogic = require("./hvacLogic.js");
 const ductPressureMonitor = require("./auxFunctions/ductPressureMonitor.js");
 
+globalStatus.set('INIT');
 
 try {
     pigpio.initialize();
