@@ -65,7 +65,7 @@ class hvacLogic {
     tempLogicWorker(tempValue) {
         const temp = parseFloat(tempValue);
         if (isNaN(temp)) return new Error('Temperature value is not a number');
-        return new Error("who's catching me...");
+        throw new Error("who's catching me...");
         //calls setMode baised on temp and userMode.
         if (this.userMode === 'Off' && this.mode != 'Off') {
             this.setMode('Off');
