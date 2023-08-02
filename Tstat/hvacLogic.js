@@ -92,7 +92,7 @@ class hvacLogic {
         //console.log("tempLogic Worker temp, cOff, hOff, cOn, hOn", temp, "\t", coolOff.toFixed(2), "\t", heatOff.toFixed(2), "\t", coolOn.toFixed(2), "\t", heatOn.toFixed(2), "\t", this.mode, (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
         console.log("---->>> TempLogic Worker timestamp: ", Math.floor(Date.now() / 1000));
         console.log("\ttemp,\tcOff,\thOff,\tcOn, \thOn");
-        console.log("\t", temp, "\t", coolOff.toFixed(2), "\t", heatOff.toFixed(2), "\t", coolOn.toFixed(2), "\t", heatOn.toFixed(2));
+        console.log("\t", temp.toFixed(2), "\t", coolOff.toFixed(2), "\t", heatOff.toFixed(2), "\t", coolOn.toFixed(2), "\t", heatOn.toFixed(2));
         console.log("\tMode: ", this.mode, " decisions: ", (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
         
         if (this.userMode === 'Auto') {
