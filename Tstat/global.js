@@ -5,9 +5,13 @@ const pigpio = require('pigpio');
 const EventEmitter = require('node:events');
 const dataBus = new EventEmitter();
 
-const globalStatus = {};
-
-globalStatus.system = 'startup';
+const globalStatus = {
+    system: 'startup',
+    set(value) {
+        this.system = value;
+        client.publish('home/pi64', this.system);
+    }
+};
 
 const hvac = {};
 
