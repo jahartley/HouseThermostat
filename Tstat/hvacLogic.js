@@ -41,12 +41,12 @@ class hvacLogic {
         }
     }
     setSetPoints(cool, heat) {
-        if (isNaN(cool)) return new Error('cool is not a number');
-        if (isNaN(heat)) return new Error('heat is not a number');
-        if (cool < 35 || cool > 160) return new Error('cool is out of bounds');
-        if (heat < 35 || heat > 100) return new Error('heat is out of bounds');
-        if (cool < heat) return new Error('Cant set cool less than heat');
-        if (cool-hvac.setpoints.minSeperation < heat) return new Error(`need minimum ${hvac.setpoints.minSeperation} seperation between cool and heat`);
+        if (isNaN(cool)) throw new Error('cool is not a number');
+        if (isNaN(heat)) throw new Error('heat is not a number');
+        if (cool < 35 || cool > 160) throw new Error('cool is out of bounds');
+        if (heat < 35 || heat > 100) throw new Error('heat is out of bounds');
+        if (cool < heat) throw new Error('Cant set cool less than heat');
+        if (cool-hvac.setpoints.minSeperation < heat) throw new Error(`need minimum ${hvac.setpoints.minSeperation} seperation between cool and heat`);
         hvac.setpoints.cool = cool;
         hvac.setpoints.heat = heat;
     }
@@ -64,8 +64,7 @@ class hvacLogic {
     }
     tempLogicWorker(tempValue) {
         const temp = parseFloat(tempValue);
-        if (isNaN(temp)) return new Error('Temperature value is not a number');
-        throw new Error("who's catching me...");
+        if (isNaN(temp)) throw new Error('Temperature value is not a number');
         //calls setMode baised on temp and userMode.
         if (this.userMode === 'Off' && this.mode != 'Off') {
             this.setMode('Off');
