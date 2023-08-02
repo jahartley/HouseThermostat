@@ -265,6 +265,7 @@ class hvacLogic {
         client.publish(baseTopic + "userMode", this.userMode);
         client.publish(baseTopic + "userFanMode", this.userFanMode);
         client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
+        console.log("--------------------- Resend request sent -----------------");
         client.publish('home/pi64', 'ok');
     }
 }
