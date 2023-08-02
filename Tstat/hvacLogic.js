@@ -32,7 +32,7 @@ class hvacLogic {
             this.setUserFanMode(hvac.startup.userFanMode);
             this.resend();
             globalStatus.set('ok');
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "init");}
         
     }
     restart(){
@@ -40,7 +40,7 @@ class hvacLogic {
             this.shutDown();
             globalStatus.set('hvacLogic init');
             this.init();
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "restart");}
     }
     errorHandler(err, where = 'unknown') {
         console.log(`hvacLogic Error Handler fault at ${where} on ${new Date()}`); 
@@ -67,7 +67,7 @@ class hvacLogic {
             client.publish(baseTopic + "userMode", "Off");
             client.publish(baseTopic + "userFanMode", "Auto");
             return;
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "shutDown");}
     }
     equipmentBuilder(location) {
         try {
@@ -75,7 +75,7 @@ class hvacLogic {
                 if (hvac[location][item]?.neededClass === undefined) continue;
                 this[location][hvac[location][item].name] = new hvacBuilder(hvac[location][item]);
             }
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "equipmentBuilder");}
     }
     listenerBuilder() {
         try {
@@ -83,7 +83,7 @@ class hvacLogic {
                 console.log("listener Builder ", hvac.listeners[item].listen, hvac.listeners[item].func);
                 dataBus.on(hvac.listeners[item].listen, (value) => this[hvac.listeners[item].func](value));
             }
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "listenerBuilder");}
     }
     setSetPoints(cool, heat) {
         try {
@@ -95,7 +95,7 @@ class hvacLogic {
             if (cool-hvac.setpoints.minSeperation < heat) throw new Error(`need minimum ${hvac.setpoints.minSeperation} seperation between cool and heat`);
             hvac.setpoints.cool = cool;
             hvac.setpoints.heat = heat;
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "setSetPoints");}
     }
     setSetPointAuto(value) {
         try {
@@ -103,7 +103,7 @@ class hvacLogic {
             hvac.setpoints.auto = value;
             client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
             console.log("setSetpoint Auto ", value, hvac.setpoints.auto);
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "setSetPointAuto");}
     }
     setUserMode(mode) {
         try {
@@ -112,7 +112,7 @@ class hvacLogic {
             if (this.userMode === mode) return;
             this.userMode = mode;
             client.publish(baseTopic + "userMode", this.userMode);
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "setUserMode");}
     }
     tempLogicWorker(tempValue) {
         try {
@@ -164,7 +164,7 @@ class hvacLogic {
                 if (heatOn < 0) {if (this.mode === 'Off') return this.setMode('Heat')};
                 return;
             }
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "tempLogicWorker");}
     } 
     setMode(mode) {
         try {
@@ -177,7 +177,7 @@ class hvacLogic {
             client.publish(baseTopic + "mode", this.mode);
             this.intervals.modeWorkerInterval = setInterval(() => this.modeWorker(), this.workerInterval);
             return;
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "setMode");}
     }
     async modeWorker() {
         try {
@@ -204,7 +204,7 @@ class hvacLogic {
             }
             if (await this.machines[func].poll(opt)) this.step++;
             return;
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "modeWorker");}
     }
     delay(item, ms) {
         try {
@@ -215,7 +215,7 @@ class hvacLogic {
             }
             if (Date.now()-this.delayTimer > ms) return true;
             return false;
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "delay");}
     }
     
     async setFanMode(mode) {
@@ -226,7 +226,7 @@ class hvacLogic {
             this.fanMode = mode;
             client.publish(baseTopic + "fanMode", this.fanMode);
             this.intervals.fanModeWorkerInterval = setInterval(() => this.fanModeWorker(), this.workerInterval);
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "setFanMode");}
     }
     async fanModeWorker() {
         try {
@@ -248,7 +248,7 @@ class hvacLogic {
                 if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
                 return;
             } else return;
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "fanModeWorker");}
     }
     fanCircStarter() {
         try {
@@ -256,7 +256,7 @@ class hvacLogic {
             this.fanCircWorkerTime = this.currentMachineRunTime('fan');
             this.intervals.fanCircStarterInterval = setTimeout(() => this.fanCircStarter(), (hvac.fanModes.circMode.inTime));
             this.intervals.fanCircWorkerInterval = setTimeout(() => this.fanCircWorker(), hvac.fanModes.circMode.inTime-hvac.fanModes.circMode.onTime);
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "fanCircStarter");}
     }
     fanCircWorker() {
         try {
@@ -269,14 +269,14 @@ class hvacLogic {
             if (delta > hvac.fanModes.circMode.onTime) return;
             this.setFanMode('CircOn');
             this.intervals.fanCircWorkerTimeout = setTimeout(() => this.setFanMode('Auto'), needed);
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "fanCircWorker");}
     }
     fanCircCancel() {
         try {
             if (this.intervals.fanCircStarterInterval) clearInterval(this.intervals.fanCircStarterInterval);
             if (this.intervals.fanCircWorkerInterval) clearInterval(this.intervals.fanCircWorkerInterval);
             if (this.intervals.fanCircWorkerTimeout) clearInterval(this.intervals.fanCircWorkerTimeout);
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "fanCircCancel");}
     }
     currentMachineRunTime(machine){
         try {
@@ -286,7 +286,7 @@ class hvacLogic {
             let time = this.machines[machine].data.accumulators.run;
             let current = Date.now()-this.machines[machine].data.timers.run;
             return time + current;
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "currentMachineRunTime");}
     }
     setUserFanMode(mode){
         try {
@@ -301,7 +301,7 @@ class hvacLogic {
             }
             this.fanCircCancel();
             this.setFanMode(mode);
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
+        } catch (err) {this.errorHandler(err, "setUserFanMode");}
     }
     resend() {
         try {
@@ -321,10 +321,7 @@ class hvacLogic {
             globalStatus.send();
             console.log("--------------------- Resend request sent -----------------");
             //client.publish('home/pi64', 'ok');
-        } catch (err) {this.errorHandler(err, this.getFuncName());}
-    }
-    getFuncName() {
-        return this.getFuncName.caller.name;
+        } catch (err) {this.errorHandler(err, "resend");}
     }
 }
 
