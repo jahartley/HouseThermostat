@@ -5,6 +5,9 @@ const pigpio = require('pigpio');
 const EventEmitter = require('node:events');
 const dataBus = new EventEmitter();
 
+const globalStatus = {};
+
+globalStatus.system = 'startup';
 
 const hvac = {};
 
@@ -480,4 +483,4 @@ hvac.sensors = {
     }
 };
 
-module.exports = { client, dataBus, pigpio, hvac };
+module.exports = { client, dataBus, pigpio, hvac, globalStatus };
