@@ -129,7 +129,7 @@ dataBus.on("Hallway/temperature/ema", (temp) => {
 });
 
 dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {
-    console.log(temp);
+    console.log("Duct Before temp: ", temp);
 });
 
 const watchdog2 = setInterval(() => {
