@@ -115,12 +115,6 @@ client.on('message', function(topic, message) {
 });
 
 
-let lastTime = Math.floor(Date.now() / 1000);
-
-dataBus.on("Hallway/temperature/ema", (temp) => {
-    lastTime = Math.floor(Date.now() / 1000);
-});
-
 
 //watchdog
 const watchdog = setInterval(() => {
@@ -148,11 +142,5 @@ const watchdog2 = setInterval(() => {
 //         if (name === this.primaryTempName) hvac1.tempLogicWorker(parseFloat(value));
 //     }
 // }
-
-let lastTime = Math.floor(Date.now() / 1000);
-
-dataBus.on("Hallway/temperature/ema", (temp) => {
-    hvac1.tempLogicWorker(parseFloat(temp));
-});
 
 
