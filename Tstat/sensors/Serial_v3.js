@@ -15,7 +15,7 @@ class Serial extends Sensor {
             this.parser = this.port.pipe(new DelimiterParser({ delimiter: '\n' }));
             this.parser.on('data', (data) => {
                 const newData = data.toString();
-                console.log(newData);
+                //console.log(newData);
                 const header = newData.slice(0,1);
                 /* 
                     t70.25
