@@ -324,7 +324,7 @@ class hvacLogic {
         } catch (err) {this.errorHandler(err, this.getFuncName());}
     }
     getFuncName() {
-        return getFuncName.caller.name;
+        return this.getFuncName.caller.name;
     }
 }
 
