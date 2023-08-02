@@ -8,13 +8,18 @@ const dataBus = new EventEmitter();
 const globalStatus = {
     system: 'startup',
     set(value) {
+        if (globalStatus.system === 'ok' && value === 'ok'){
+            return client.publish('home/pi64', this.system);
+        }
         this.system = value;
         console.log("+++++++++++++++++ GLOBAL STATUS ++++++++++++++++++++++");
         console.log("+++++++++++++++++ ", value ," ++++++++++++++++++++++");
         client.publish('home/pi64', this.system);
+        return;
     },
     send() {
         client.publish('home/pi64', this.system);
+        return;
     }
 };
 
