@@ -63,7 +63,8 @@ class hvacLogic {
         client.publish(baseTopic + "userMode", this.userMode);
     }
     tempLogicWorker(tempValue) {
-        const temp = parseFloat(tempValue);
+        //const temp = parseFloat(tempValue);
+        const temp = tempValue
         if (isNaN(temp)) return new Error('Temperature value is not a number');
         //calls setMode baised on temp and userMode.
         if (this.userMode === 'Off' && this.mode != 'Off') {
