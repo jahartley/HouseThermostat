@@ -37,10 +37,6 @@ class hvacLogic {
     }
     restart(){
         try {
-            clearTimeout(this.errorID);
-            console.log('-------------------------------------------------------------');
-            console.log(this.errorID);
-            this.errorID = 0;
             this.shutDown();
             globalStatus.set('hvacLogic init');
             this.init();
@@ -50,13 +46,15 @@ class hvacLogic {
         console.log(`hvacLogic Error Handler fault at ${where} on ${new Date()}`); 
         console.trace(err);
         globalStatus.set('hvacLogic Error');
-        console.log('-------------------------------------------------------------');
-            console.log(this.errorID);
         if (this.errorID != 0) return; 
-        return this.errorID = setTimeout(() => this.restart(), 30000);
+        return this.errorID = setTimeout(() => this.restart(), 120000);
     }
     shutDown(){
         try {
+            if (this.errorID != 0) {
+                clearTimeout(this.errorID);
+                this.errorID = 0;
+            }
             globalStatus.set('hvacLogic shutDown');
             console.log(`Hvac Logic shutdown!`);
             for (let interval in this.intervals) {
@@ -125,7 +123,7 @@ class hvacLogic {
         try {
             const temp = parseFloat(tempValue);
             if (isNaN(temp)) throw new Error('Temperature value is not a number');
-            throw new Error("TEST ERROR");
+            //throw new Error("TEST ERROR");
             //calls setMode baised on temp and userMode.
             if (this.userMode === 'Off' && this.mode != 'Off') {
                 this.setMode('Off');
