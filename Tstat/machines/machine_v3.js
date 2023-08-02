@@ -75,7 +75,7 @@ class Machine {
         
         for (let actions in this.data.states[this.state][req].actions) {
             if (!this[this.data.states[this.state][req].actions[actions].func](this.data.states[this.state][req].actions[actions].options)) {
-                console.log(`${this.data.name} poll request ${req} blocked in action ${actions} FAIL`);
+                //console.log(`${this.data.name} poll request ${req} blocked in action ${actions} FAIL`);
                 return false;
             }
         }
