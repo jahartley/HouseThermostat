@@ -9,6 +9,8 @@ const globalStatus = {
     system: 'startup',
     set(value) {
         this.system = value;
+        console.log("+++++++++++++++++ GLOBAL STATUS ++++++++++++++++++++++");
+        console.log("+++++++++++++++++ ", value ," ++++++++++++++++++++++");
         client.publish('home/pi64', this.system);
     },
     send() {
