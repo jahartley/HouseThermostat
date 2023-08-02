@@ -18,7 +18,7 @@
 
 
 console.log("-------------------------------------------------");
-const {client, pigpio, dataBus} = require("./global.js");
+const {client, pigpio, dataBus, globalStatus} = require("./global.js");
 const hvacLogic = require("./hvacLogic.js");
 const ductPressureMonitor = require("./auxFunctions/ductPressureMonitor.js");
 
@@ -41,7 +41,7 @@ const gracefulShutdown = () => {
     hvac1.shutDown();
     clearInterval(watchdog);
     clearInterval(watchdog2);
-    client.publish('home/pi64', 'shutdown');
+    globalStatus.set('shutdown');
     client.end();
     console.log("pigpio terminate");
     pigpio.terminate();
@@ -95,7 +95,6 @@ client.on('connect', () => {
     client.subscribe('home/hvac/control/userFanMode');
     client.subscribe('home/hvac/control/userMode');
     client.subscribe('home/hvac/control/setpoint');
-    client.publish('home/pi64', 'ok');
 })
 
 client.on('message', function(topic, message) {
@@ -118,7 +117,11 @@ client.on('message', function(topic, message) {
 
 //watchdog
 const watchdog = setInterval(() => {
-    client.publish('home/pi64', 'ok');
+    //client.publish('home/pi64', 'ok');
+    if (globalStatus.system === 'ok'){
+        globalStatus.set('Alive');
+        globalStatus.set('ok');
+    }
 }, 300000);
 
 //watchdog2
@@ -135,7 +138,8 @@ dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {
 const watchdog2 = setInterval(() => {
     if (Math.floor(Date.now() / 1000)-45 > lastTime) {
         console.log("************************ WATCHDOG 2 FAIL RESTART TSTAT *********************************");
-        gracefulShutdown();
+        globalStatus.set('Serial Temperature Error!');
+        //gracefulShutdown();
     }
 }, 60000);
 
