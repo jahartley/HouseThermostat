@@ -42,7 +42,7 @@ hvac.routines = {
 hvac.setpoints = {
     cool: 77,
     heat: 73,
-    auto: 73,
+    auto: 72,
     minSeperation: 2,
     hysteresis: 1.0
 }
