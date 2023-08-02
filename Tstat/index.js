@@ -119,10 +119,7 @@ client.on('message', function(topic, message) {
 //watchdog
 const watchdog = setInterval(() => {
     //client.publish('home/pi64', 'ok');
-    if (globalStatus.system === 'ok'){
-        globalStatus.set('Alive');
-        globalStatus.set('ok');
-    }
+    globalStatus.set('ok');
 }, 300000);
 
 //watchdog2
