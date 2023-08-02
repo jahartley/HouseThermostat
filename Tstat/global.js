@@ -12,6 +12,10 @@ const hvac = {};
 // fan from rapid cycling.
 // delay: mandatory delay
 
+hvac.startup = {
+    userMode: 'Cool',
+    userFanMode: 'Auto'
+};
 
 hvac.routines = {
     Heat: {
