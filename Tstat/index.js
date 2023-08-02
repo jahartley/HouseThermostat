@@ -40,6 +40,7 @@ const gracefulShutdown = () => {
     dataBus.removeAllListeners();
     hvac1.shutDown();
     clearInterval(watchdog);
+    clearInterval(watchdog2);
     client.publish('home/pi64', 'shutdown');
     client.end();
     console.log("pigpio terminate");
@@ -99,7 +100,6 @@ client.on('connect', () => {
 
 client.on('message', function(topic, message) {
     if (topic.toString() == 'home/boss/resend' && message.toString() == '1') {
-      client.publish('home/pi64', 'ok');
       hvac1.resend();
     }
     if (topic.toString() == 'home/hvac/control/userFanMode') {
@@ -114,10 +114,30 @@ client.on('message', function(topic, message) {
 
 });
 
+
+let lastTime = Math.floor(Date.now() / 1000);
+
+dataBus.on("Hallway/temperature/ema", (temp) => {
+    lastTime = Math.floor(Date.now() / 1000);
+});
+
+
 //watchdog
 const watchdog = setInterval(() => {
     client.publish('home/pi64', 'ok');
 }, 300000);
+
+//watchdog2
+let lastTime = Math.floor(Date.now() / 1000);
+
+dataBus.on("Hallway/temperature/ema", (temp) => {
+    lastTime = Math.floor(Date.now() / 1000);
+});
+const watchdog2 = setInterval(() => {
+    if (Math.floor(Date.now() / 1000)-45 > lastTime) {
+        gracefulShutdown();
+    }
+}, 60000);
 
 // class tempSorter {
 //     constructor() {
@@ -129,10 +149,10 @@ const watchdog = setInterval(() => {
 //     }
 // }
 
+let lastTime = Math.floor(Date.now() / 1000);
 
-
-// dataBus.on("Hallway/temperature/ema", (temp) => {
-//     hvac1.tempLogicWorker(parseFloat(temp));
-// });
+dataBus.on("Hallway/temperature/ema", (temp) => {
+    hvac1.tempLogicWorker(parseFloat(temp));
+});
 
 
