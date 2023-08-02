@@ -1,5 +1,5 @@
 
-const {client, dataBus, hvac} = require("./global.js");
+const {client, dataBus, hvac, globalStatus} = require("./global.js");
 const hvacBuilder = require("./hvacBuilder.js");
 
 // system run modes specifed in hvac.routines
