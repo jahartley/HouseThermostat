@@ -10,6 +10,9 @@ const globalStatus = {
     set(value) {
         this.system = value;
         client.publish('home/pi64', this.system);
+    },
+    send() {
+        client.publish('home/pi64', this.system);
     }
 };
 
