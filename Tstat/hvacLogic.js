@@ -50,8 +50,10 @@ class hvacLogic {
         console.log(`hvacLogic Error Handler fault at ${where} on ${new Date()}`); 
         console.trace(err);
         globalStatus.set('hvacLogic Error');
+        console.log('-------------------------------------------------------------');
+            console.log(this.errorID);
         if (this.errorID != 0) return; 
-        return this.errorID = setTimeout(() => this.restart(), 120000);
+        return this.errorID = setTimeout(() => this.restart(), 30000);
     }
     shutDown(){
         try {
