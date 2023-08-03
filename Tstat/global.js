@@ -86,7 +86,8 @@ hvac.fanModes = {
 hvac.listeners = {
     tempWorker: {
         listen: "Hallway/temperature/ema",
-        func: "tempLogicWorker"
+        func: "tempLogicWorker",
+        name: "Hallway"
     }
 };
 
