@@ -86,7 +86,7 @@ class hvacLogic {
         try {
             for (const item in hvac.listeners) {
                 console.log("listener Builder ", hvac.listeners[item].listen, hvac.listeners[item].func);
-                dataBus.on(hvac.listeners[item].listen, (value) => this[hvac.listeners[item].func](value));
+                dataBus.on(hvac.listeners[item].listen, (value) => this[hvac.listeners[item].func](value, hvac.listeners[item].name));
             }
         } catch (err) {this.errorHandler(err, "listenerBuilder");}
     }
@@ -119,10 +119,13 @@ class hvacLogic {
             client.publish(baseTopic + "userMode", this.userMode);
         } catch (err) {this.errorHandler(err, "setUserMode");}
     }
-    tempLogicWorker(tempValue) {
+    tempLogicWorker(tempValue, name) {
         try {
             const temp = parseFloat(tempValue);
-            if (isNaN(temp)) throw new Error('Temperature value is not a number');
+            if (isNaN(temp)) {
+                //throw new Error('Temperature value is not a number');
+                this.sensors[name].restart();
+            }
             //throw new Error("TEST ERROR");
             //calls setMode baised on temp and userMode.
             if (this.userMode === 'Off' && this.mode != 'Off') {
