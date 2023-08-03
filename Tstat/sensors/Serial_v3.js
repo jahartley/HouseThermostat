@@ -29,7 +29,7 @@ class Serial extends Sensor {
         this.init();
     }
     save(property, value) {
-        if (value != NaN) throw new Error("Property ", property, " is NaN, value: ", value);
+        if (isNaN(value)) throw new Error("Property " + property + " is NaN, value: "+ value.toString());
         super.save(property, value);
     }
     parseData(data){
