@@ -136,6 +136,7 @@ dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {
 const watchdog2 = setInterval(() => {
     if (Math.floor(Date.now() / 1000)-45 > lastTime) {
         console.log("************************ WATCHDOG 2 FAIL RESTART TSTAT *********************************");
+        console.log(new Date(lastTime*1000));
         globalStatus.set('Serial Temperature Error!');
         hvac1.sensors.Hallway.restart();
         //gracefulShutdown();
