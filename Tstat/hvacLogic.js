@@ -32,6 +32,7 @@ class hvacLogic {
             this.setUserFanMode(hvac.startup.userFanMode);
             this.resend();
             globalStatus.set('ok');
+            console.log(this.sensors);
         } catch (err) {this.errorHandler(err, "init");}
         
     }
