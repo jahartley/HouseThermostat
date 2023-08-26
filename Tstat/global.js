@@ -1,15 +1,38 @@
+
 const mqtt = require('mqtt');
 const client = mqtt.connect('mqtt://192.168.77.1')
 const pigpio = require('pigpio');
 const EventEmitter = require('node:events');
 const dataBus = new EventEmitter();
 
+const globalStatus = {
+    system: 'startup',
+    set(value) {
+        if (globalStatus.system === 'ok' && value === 'ok'){
+            return client.publish('home/pi64', this.system);
+        }
+        this.system = value;
+        console.log("+++++++++++++++++ GLOBAL STATUS ++++++++++++++++++++++");
+        console.log("+++++++++++++++++ ", value ," ++++++++++++++++++++++");
+        client.publish('home/pi64', this.system);
+        return;
+    },
+    send() {
+        client.publish('home/pi64', this.system);
+        return;
+    }
+};
 
 const hvac = {};
 
 // Hvac routines. Baised of my ac and furnace system. Furnce controls fan so set fan idle before heat prevents
 // fan from rapid cycling.
 // delay: mandatory delay
+
+hvac.startup = {
+    userMode: 'Cool',
+    userFanMode: 'Auto'
+};
 
 hvac.routines = {
     Heat: {
@@ -40,7 +63,7 @@ hvac.routines = {
 hvac.setpoints = {
     cool: 77,
     heat: 73,
-    auto: 73,
+    auto: 72,
     minSeperation: 2,
     hysteresis: 1.0
 }
@@ -57,13 +80,14 @@ hvac.userModes = {
 hvac.fanModes = {
     fanModeNames: ['Auto', 'On', 'CircOn'],
     fanRequiredModes: ['Cool', 'Heat'],
-    circMode: {onTime: 300000, inTime: 1800000} //circ setting 5min every 30min
+    circMode: {onTime: 300000, inTime: 2400000} //circ setting 5min every 30min
 };
 
 hvac.listeners = {
     tempWorker: {
         listen: "Hallway/temperature/ema",
-        func: "tempLogicWorker"
+        func: "tempLogicWorker",
+        name: "Hallway"
     }
 };
 
@@ -474,4 +498,4 @@ hvac.sensors = {
     }
 };
 
-module.exports = { client, dataBus, pigpio, hvac };
+module.exports = { client, dataBus, pigpio, hvac, globalStatus };

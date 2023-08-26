@@ -13,11 +13,16 @@
         Make Setpoints...
 */
 
+
+
+
+
 console.log("-------------------------------------------------");
-const {client, pigpio, dataBus} = require("./global.js");
+const {client, pigpio, dataBus, globalStatus} = require("./global.js");
 const hvacLogic = require("./hvacLogic.js");
 const ductPressureMonitor = require("./auxFunctions/ductPressureMonitor.js");
 
+globalStatus.set('INIT');
 
 try {
     pigpio.initialize();
@@ -27,6 +32,7 @@ try {
     //gracefulShutdown();
 }
 
+
 const hvac1 = new hvacLogic();
 const dpm = new ductPressureMonitor();
 
@@ -35,7 +41,8 @@ const gracefulShutdown = () => {
     dataBus.removeAllListeners();
     hvac1.shutDown();
     clearInterval(watchdog);
-    client.publish('home/pi64', 'shutdown');
+    clearInterval(watchdog2);
+    globalStatus.set('shutdown');
     client.end();
     console.log("pigpio terminate");
     pigpio.terminate();
@@ -89,12 +96,10 @@ client.on('connect', () => {
     client.subscribe('home/hvac/control/userFanMode');
     client.subscribe('home/hvac/control/userMode');
     client.subscribe('home/hvac/control/setpoint');
-    client.publish('home/pi64', 'ok');
 })
 
 client.on('message', function(topic, message) {
     if (topic.toString() == 'home/boss/resend' && message.toString() == '1') {
-      client.publish('home/pi64', 'ok');
       hvac1.resend();
     }
     if (topic.toString() == 'home/hvac/control/userFanMode') {
@@ -109,10 +114,34 @@ client.on('message', function(topic, message) {
 
 });
 
+
+
 //watchdog
 const watchdog = setInterval(() => {
-    client.publish('home/pi64', 'ok');
+    //client.publish('home/pi64', 'ok');
+    globalStatus.set('ok');
 }, 300000);
+
+//watchdog2
+let lastTime = Math.floor(Date.now() / 1000);
+
+dataBus.on("Hallway/temperature/ema", (temp) => {
+    lastTime = Math.floor(Date.now() / 1000);
+});
+
+dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {
+    //console.log("Duct Before temp: ", temp);
+});
+
+const watchdog2 = setInterval(() => {
+    if (Math.floor(Date.now() / 1000)-45 > lastTime) {
+        console.log("************************ WATCHDOG 2 FAIL RESTART TSTAT *********************************");
+        console.log(new Date(lastTime*1000));
+        globalStatus.set('Serial Temperature Error!');
+        hvac1.sensors.Hallway.restart();
+        //gracefulShutdown();
+    }
+}, 60000);
 
 // class tempSorter {
 //     constructor() {
@@ -123,11 +152,5 @@ const watchdog = setInterval(() => {
 //         if (name === this.primaryTempName) hvac1.tempLogicWorker(parseFloat(value));
 //     }
 // }
-
-
-
-// dataBus.on("Hallway/temperature/ema", (temp) => {
-//     hvac1.tempLogicWorker(parseFloat(temp));
-// });
 
 

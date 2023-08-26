@@ -1,4 +1,5 @@
-const {client, dataBus, hvac} = require("./global.js");
+
+const {client, dataBus, hvac, globalStatus} = require("./global.js");
 const hvacBuilder = require("./hvacBuilder.js");
 
 // system run modes specifed in hvac.routines
@@ -7,257 +8,328 @@ const baseTopic = "home/hvac/status/"
 
 class hvacLogic {
     constructor() {
-        this.mode = 'Off';
-        this.step = 0;
-        this.workerInterval = 1000;
-        this.fanMode = 'Auto';
-        this.userMode = 'init';
-        this.userFanMode = 'init';
-        this.temperature = -150;
-        this.intervals = {};
-        this.machines = {};
-        this.sensors = {};
-        this.listeners = {};
-        this.equipmentBuilder("machines");
-        this.equipmentBuilder("sensors");
-        this.machines["failSafe"].poll('run');
-        this.listenerBuilder();
-        this.setUserMode('Auto');
-        this.setUserFanMode('Auto');
-        this.resend();
-
+        this.errorID = 0;
+        this.init();
     }
-    equipmentBuilder(location) {        
-        for (const item in hvac[location]) {
-            if (hvac[location][item]?.neededClass === undefined) continue;
-            this[location][hvac[location][item].name] = new hvacBuilder(hvac[location][item]);
-        }
-    }
-    listenerBuilder() {
-        for (const item in hvac.listeners) {
-            console.log("listener Builder ", hvac.listeners[item].listen, hvac.listeners[item].func);
-            dataBus.on(hvac.listeners[item].listen, (value) => this[hvac.listeners[item].func](value));
-        }
-    }
-    setSetPoints(cool, heat) {
-        if (isNaN(cool)) return new Error('cool is not a number');
-        if (isNaN(heat)) return new Error('heat is not a number');
-        if (cool < 35 || cool > 160) return new Error('cool is out of bounds');
-        if (heat < 35 || heat > 100) return new Error('heat is out of bounds');
-        if (cool < heat) return new Error('Cant set cool less than heat');
-        if (cool-hvac.setpoints.minSeperation < heat) return new Error(`need minimum ${hvac.setpoints.minSeperation} seperation between cool and heat`);
-        hvac.setpoints.cool = cool;
-        hvac.setpoints.heat = heat;
-    }
-    setSetPointAuto(value) {
-        hvac.setpoints.auto = value;
-        client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
-        console.log("setSetpoint Auto ", value, hvac.setpoints.auto);
-    }
-    setUserMode(mode) {
-        console.log(`HvacLogic setUserMode ${mode}`);
-        if (!hvac.userModes.userModesNames.includes(mode)) throw new Error('Unknown mode');
-        if (this.userMode === mode) return;
-        this.userMode = mode;
-        client.publish(baseTopic + "userMode", this.userMode);
-    }
-    tempLogicWorker(temp) {
-
-        //calls setMode baised on temp and userMode.
-        if (this.userMode === 'Off' && this.mode != 'Off') {
-            this.setMode('Off');
-            return;
-        }
-        let coolSetpoint = 0;
-        let heatSetpoint = 0;
-        if (hvac.setpoints?.auto === undefined) {
-            coolSetpoint = hvac.setpoints.cool;
-            heatSetpoint = hvac.setpoints.heat;
-        } else {
-            coolSetpoint = hvac.setpoints.auto+(hvac.setpoints.minSeperation/2);
-            heatSetpoint = hvac.setpoints.auto-(hvac.setpoints.minSeperation/2);
-        }
-        let coolOff = temp-coolSetpoint+hvac.setpoints.hysteresis; //if negative cool off
-        let heatOff = heatSetpoint+hvac.setpoints.hysteresis-temp; //if negative heat off
-        let coolOn = coolSetpoint-temp; //if negative coolOn
-        let heatOn = temp-heatSetpoint; //if negative heatOn
-
+    init() {
+        try {
+            this.mode = 'Off';
+            this.step = 0;
+            this.workerInterval = 1000;
+            this.fanMode = 'Auto';
+            this.userMode = 'init';
+            this.userFanMode = 'init';
+            this.temperature = -150;
+            this.intervals = {};
+            this.machines = {};
+            this.sensors = {};
+            this.listeners = {};
+            this.equipmentBuilder("machines");
+            this.equipmentBuilder("sensors");
+            this.machines["failSafe"].poll('run');
+            this.listenerBuilder();
+            this.setUserMode(hvac.startup.userMode);
+            this.setUserFanMode(hvac.startup.userFanMode);
+            this.resend();
+            globalStatus.set('ok');
+        } catch (err) {this.errorHandler(err, "init");}
         
-        // let mode = "no";
-        // if (coolOff < 0) {if (this.tempmode === 'cool') {this.tempmode = 'off'; mode = "yes";}};
-        // if (heatOff < 0) {if (this.tempmode === 'heat') {this.tempmode = 'off'; mode = "yes";}};
-        // if (coolOn < 0) {if (this.tempmode === 'off') {this.tempmode = 'cool'; mode = "yes";}};
-        // if (heatOn < 0) {if (this.tempmode === 'off') {this.tempmode = 'heat'; mode = "yes";}};
-        //console.log("tempLogic Worker temp, cOff, hOff, cOn, hOn", temp, "\t", coolOff, "\t", heatOff, "\t", coolOn, "\t", heatOn, "\t", this.mode, (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
-        
-        if (this.userMode === 'Auto') {
-            if (coolOff < 0) {if (this.mode === 'Cool') return this.setMode('Off')};
-            if (heatOff < 0) {if (this.mode === 'Heat') return this.setMode('Off')};
-            if (coolOn < 0) {if (this.mode === 'Off') return this.setMode('Cool')};
-            if (heatOn < 0) {if (this.mode === 'Off') return this.setMode('Heat')};
-            return;
-        }
-        if (this.userMode === 'Cool') {
-            if (this.mode === 'Heat') return this.setMode('Off');
-            if (coolOff < 0) {if (this.mode === 'Cool') return this.setMode('Off')};
-            if (coolOn < 0) {if (this.mode === 'Off') return this.setMode('Cool')};
-            return;
-        }
-        if (this.userMode === 'Heat') {
-            if (this.mode === 'Cool') return this.setMode('Off')
-            if (heatOff < 0) {if (this.mode === 'Heat') return this.setMode('Off')};
-            if (heatOn < 0) {if (this.mode === 'Off') return this.setMode('Heat')};
-            return;
-        }
-    } 
-    setMode(mode) {
-        console.log(`HvacLogic setMode ${mode}`);
-        if (!hvac.systemModes.systemModeNames.includes(mode)) throw new Error('Unknown mode');
-        if (this.mode === mode) return;
-        if (this.intervals.modeWorkerInterval) clearInterval(this.intervals.modeWorkerInterval);
-        this.step = 0;
-        this.mode = mode;
-        client.publish(baseTopic + "mode", this.mode);
-        this.intervals.modeWorkerInterval = setInterval(() => this.modeWorker(), this.workerInterval);
-        return;
     }
-    async modeWorker() {
-        if (hvac.routines?.[this.mode]?.[this.step] === undefined) throw new Error(`Hvac Logic modeWorker mode: ${this.mode} step: ${this.step} unknown`);
-        let { func, opt } = hvac.routines[this.mode][this.step];
-        if (func === 'complete') {
-            console.log(`Hvac modeWorker ${this.mode} is complete.`);
-            clearInterval(this.intervals.modeWorkerInterval);
-            this.modeWorkerInterval = null;
-            return;
-        }
-        if (func === 'delay') {
-            if (this.delay(`${this.mode}/${this.step}`, opt)) {
-                this.step++;
-                return;
-            } else return;
-        }
-        //take fanMode into account.
-        if (func === 'fan') {
-            if (this.fanMode !== 'Auto' && this.mode === 'Off') { //prevent fan turn off. during off mode if fan on/circ.
-                this.step++;
-                return;
-            }
-        }
-        if (await this.machines[func].poll(opt)) this.step++;
-        return;
+    restart(){
+        try {
+            this.shutDown();
+            globalStatus.set('hvacLogic init');
+            this.init();
+        } catch (err) {this.errorHandler(err, "restart");}
     }
-    delay(item, ms) {
-        if (this.delayItem != item) {
-            this.delayTimer = Date.now();
-            this.delayItem = item;
-            console.log(`New hvac modeWorker delay ${item} for ${ms/1000} seconds`);
-        }
-        if (Date.now()-this.delayTimer > ms) return true;
-        return false;
+    errorHandler(err, where = 'unknown') {
+        console.log(`hvacLogic Error Handler fault at ${where} on ${new Date()}`); 
+        console.trace(err);
+        globalStatus.set('hvacLogic Error');
+        if (this.errorID != 0) return; 
+        return this.errorID = setTimeout(() => this.restart(), 120000);
     }
     shutDown(){
-        console.log(`Hvac Logic shutdown!`);
-        for (let interval in this.intervals) {
-            if (this.intervals[interval]) clearInterval(this.intervals[interval]);
-        }
-        for (let item in this.sensors) {
-            this.sensors[item].shutDown();
-        }
-        for (let item in this.machines) {
-            this.machines[item].shutDown();
-        }
-        
-        client.publish(baseTopic + "mode", "Off");
-        client.publish(baseTopic + "fanMode", "Auto");
-        client.publish(baseTopic + "userMode", "Off");
-        client.publish(baseTopic + "userFanMode", "Auto");
-        return;
+        try {
+            if (this.errorID != 0) {
+                clearTimeout(this.errorID);
+                this.errorID = 0;
+            }
+            globalStatus.set('hvacLogic shutDown');
+            console.log(`Hvac Logic shutdown!`);
+            for (let interval in this.intervals) {
+                if (this.intervals[interval]) clearInterval(this.intervals[interval]);
+            }
+            for (let item in this.sensors) {
+                this.sensors[item].shutDown();
+            }
+            for (let item in this.machines) {
+                this.machines[item].shutDown();
+            }
+            
+            client.publish(baseTopic + "mode", "Off");
+            client.publish(baseTopic + "fanMode", "Auto");
+            client.publish(baseTopic + "userMode", "Off");
+            client.publish(baseTopic + "userFanMode", "Auto");
+            return;
+        } catch (err) {this.errorHandler(err, "shutDown");}
     }
-    async setFanMode(mode) {
-        console.log(`HvacLogic setFanMode ${mode}`);
-        if (!hvac.fanModes.fanModeNames.includes(mode)) throw new Error('setFanMode Unknown mode');
-        if (this.fanMode === mode) return;
-        this.fanMode = mode;
-        client.publish(baseTopic + "fanMode", this.fanMode);
-        this.intervals.fanModeWorkerInterval = setInterval(() => this.fanModeWorker(), this.workerInterval);
+    equipmentBuilder(location) {
+        try {
+            for (const item in hvac[location]) {
+                if (hvac[location][item]?.neededClass === undefined) continue;
+                this[location][hvac[location][item].name] = new hvacBuilder(hvac[location][item]);
+            }
+        } catch (err) {this.errorHandler(err, "equipmentBuilder");}
     }
-    async fanModeWorker() {
-        if (this.fanMode === 'Auto') {
-            if (hvac.fanModes.fanRequiredModes.includes(this.mode)) { 
-                //fan required in this mode will be turned off automaticlly.
-                if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
+    listenerBuilder() {
+        try {
+            for (const item in hvac.listeners) {
+                console.log("listener Builder ", hvac.listeners[item].listen, hvac.listeners[item].func);
+                dataBus.on(hvac.listeners[item].listen, (value) => this[hvac.listeners[item].func](value, hvac.listeners[item].name));
+            }
+        } catch (err) {this.errorHandler(err, "listenerBuilder");}
+    }
+    setSetPoints(cool, heat) {
+        try {
+            if (isNaN(cool)) throw new Error('cool is not a number');
+            if (isNaN(heat)) throw new Error('heat is not a number');
+            if (cool < 35 || cool > 160) throw new Error('cool is out of bounds');
+            if (heat < 35 || heat > 100) throw new Error('heat is out of bounds');
+            if (cool < heat) throw new Error('Cant set cool less than heat');
+            if (cool-hvac.setpoints.minSeperation < heat) throw new Error(`need minimum ${hvac.setpoints.minSeperation} seperation between cool and heat`);
+            hvac.setpoints.cool = cool;
+            hvac.setpoints.heat = heat;
+        } catch (err) {this.errorHandler(err, "setSetPoints");}
+    }
+    setSetPointAuto(value) {
+        try {
+            if (isNaN(value)) throw new Error('value is not a number');
+            hvac.setpoints.auto = value;
+            client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
+            console.log("setSetpoint Auto ", value, hvac.setpoints.auto);
+        } catch (err) {this.errorHandler(err, "setSetPointAuto");}
+    }
+    setUserMode(mode) {
+        try {
+            console.log(`HvacLogic setUserMode ${mode}`);
+            if (!hvac.userModes.userModesNames.includes(mode)) throw new Error('Unknown mode');
+            if (this.userMode === mode) return;
+            this.userMode = mode;
+            client.publish(baseTopic + "userMode", this.userMode);
+        } catch (err) {this.errorHandler(err, "setUserMode");}
+    }
+    tempLogicWorker(tempValue, name) {
+        try {
+            const temp = parseFloat(tempValue);
+            if (isNaN(temp)) {
+                //throw new Error('Temperature value is not a number');
+                this.sensors[name].restart();
+            }
+            //throw new Error("TEST ERROR");
+            //calls setMode baised on temp and userMode.
+            if (this.userMode === 'Off' && this.mode != 'Off') {
+                this.setMode('Off');
                 return;
+            }
+            let coolSetpoint = 0;
+            let heatSetpoint = 0;
+            if (hvac.setpoints?.auto === undefined) {
+                coolSetpoint = hvac.setpoints.cool;
+                heatSetpoint = hvac.setpoints.heat;
             } else {
-                //fan not required turn off.
-                if (await this.machines['fan'].poll('idle')) {
-                    if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
+                coolSetpoint = hvac.setpoints.auto+(hvac.setpoints.minSeperation/2);
+                heatSetpoint = hvac.setpoints.auto-(hvac.setpoints.minSeperation/2);
+            }
+            let coolOff = temp-coolSetpoint+hvac.setpoints.hysteresis; //if negative cool off
+            let heatOff = heatSetpoint+hvac.setpoints.hysteresis-temp; //if negative heat off
+            let coolOn = coolSetpoint-temp; //if negative coolOn
+            let heatOn = temp-heatSetpoint; //if negative heatOn
+            
+            //console.log("tempLogic Worker temp, cOff, hOff, cOn, hOn", temp, "\t", coolOff.toFixed(2), "\t", heatOff.toFixed(2), "\t", coolOn.toFixed(2), "\t", heatOn.toFixed(2), "\t", this.mode, (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
+            
+            //console.log("---->>> TempLogic Worker timestamp: ", Math.floor(Date.now() / 1000));
+            //console.log("\ttemp,\tcOff,\thOff,\tcOn, \thOn");
+            //console.log("\t", temp.toFixed(2), "\t", coolOff.toFixed(2), "\t", heatOff.toFixed(2), "\t", coolOn.toFixed(2), "\t", heatOn.toFixed(2));
+            //console.log("\tMode: ", this.mode, " decisions: ", (coolOff < 0 ? 'coolOff' : ''), (heatOff < 0 ? 'heatOff' : ''), (coolOn < 0 ? 'coolOn' : ''), (heatOn < 0 ? 'heatOn' : ''));
+            
+            if (this.userMode === 'Auto') {
+                if (coolOff < 0) {if (this.mode === 'Cool') return this.setMode('Off')};
+                if (heatOff < 0) {if (this.mode === 'Heat') return this.setMode('Off')};
+                if (coolOn < 0) {if (this.mode === 'Off') return this.setMode('Cool')};
+                if (heatOn < 0) {if (this.mode === 'Off') return this.setMode('Heat')};
+                return;
+            }
+            if (this.userMode === 'Cool') {
+                if (this.mode === 'Heat') return this.setMode('Off');
+                if (coolOff < 0) {if (this.mode === 'Cool') return this.setMode('Off')};
+                if (coolOn < 0) {if (this.mode === 'Off') return this.setMode('Cool')};
+                return;
+            }
+            if (this.userMode === 'Heat') {
+                if (this.mode === 'Cool') return this.setMode('Off')
+                if (heatOff < 0) {if (this.mode === 'Heat') return this.setMode('Off')};
+                if (heatOn < 0) {if (this.mode === 'Off') return this.setMode('Heat')};
+                return;
+            }
+        } catch (err) {this.errorHandler(err, "tempLogicWorker");}
+    } 
+    setMode(mode) {
+        try {
+            console.log(`HvacLogic setMode ${mode}`);
+            if (!hvac.systemModes.systemModeNames.includes(mode)) throw new Error('Unknown mode');
+            if (this.mode === mode) return;
+            if (this.intervals.modeWorkerInterval) clearInterval(this.intervals.modeWorkerInterval);
+            this.step = 0;
+            this.mode = mode;
+            client.publish(baseTopic + "mode", this.mode);
+            this.intervals.modeWorkerInterval = setInterval(() => this.modeWorker(), this.workerInterval);
+            return;
+        } catch (err) {this.errorHandler(err, "setMode");}
+    }
+    async modeWorker() {
+        try {
+            if (hvac.routines?.[this.mode]?.[this.step] === undefined) throw new Error(`Hvac Logic modeWorker mode: ${this.mode} step: ${this.step} unknown`);
+            let { func, opt } = hvac.routines[this.mode][this.step];
+            if (func === 'complete') {
+                console.log(`Hvac modeWorker ${this.mode} is complete.`);
+                clearInterval(this.intervals.modeWorkerInterval);
+                this.modeWorkerInterval = null;
+                return;
+            }
+            if (func === 'delay') {
+                if (this.delay(`${this.mode}/${this.step}`, opt)) {
+                    this.step++;
                     return;
                 } else return;
             }
-        }
-        //fanMode is either on or circOn, turn fan on.
-        if (await this.machines['fan'].poll('run')) {
-            if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
+            //take fanMode into account.
+            if (func === 'fan') {
+                if (this.fanMode !== 'Auto' && this.mode === 'Off') { //prevent fan turn off. during off mode if fan on/circ.
+                    this.step++;
+                    return;
+                }
+            }
+            if (await this.machines[func].poll(opt)) this.step++;
             return;
-        } else return;
+        } catch (err) {this.errorHandler(err, "modeWorker");}
+    }
+    delay(item, ms) {
+        try {
+            if (this.delayItem != item) {
+                this.delayTimer = Date.now();
+                this.delayItem = item;
+                console.log(`New hvac modeWorker delay ${item} for ${ms/1000} seconds`);
+            }
+            if (Date.now()-this.delayTimer > ms) return true;
+            return false;
+        } catch (err) {this.errorHandler(err, "delay");}
+    }
+    
+    async setFanMode(mode) {
+        try {
+            console.log(`HvacLogic setFanMode ${mode}`);
+            if (!hvac.fanModes.fanModeNames.includes(mode)) throw new Error('setFanMode Unknown mode');
+            if (this.fanMode === mode) return;
+            this.fanMode = mode;
+            client.publish(baseTopic + "fanMode", this.fanMode);
+            this.intervals.fanModeWorkerInterval = setInterval(() => this.fanModeWorker(), this.workerInterval);
+        } catch (err) {this.errorHandler(err, "setFanMode");}
+    }
+    async fanModeWorker() {
+        try {
+            if (this.fanMode === 'Auto') {
+                if (hvac.fanModes.fanRequiredModes.includes(this.mode)) { 
+                    //fan required in this mode will be turned off automaticlly.
+                    if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
+                    return;
+                } else {
+                    //fan not required turn off.
+                    if (await this.machines['fan'].poll('idle')) {
+                        if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
+                        return;
+                    } else return;
+                }
+            }
+            //fanMode is either on or circOn, turn fan on.
+            if (await this.machines['fan'].poll('run')) {
+                if (this.intervals.fanModeWorkerInterval) clearInterval(this.intervals.fanModeWorkerInterval);
+                return;
+            } else return;
+        } catch (err) {this.errorHandler(err, "fanModeWorker");}
     }
     fanCircStarter() {
-        this.setFanMode('Auto');
-        this.fanCircWorkerTime = this.currentMachineRunTime('fan');
-        this.intervals.fanCircStarterInterval = setTimeout(() => this.fanCircStarter(), (hvac.fanModes.circMode.inTime));
-        this.intervals.fanCircWorkerInterval = setTimeout(() => this.fanCircWorker(), hvac.fanModes.circMode.inTime-hvac.fanModes.circMode.onTime);
+        try {
+            this.setFanMode('Auto');
+            this.fanCircWorkerTime = this.currentMachineRunTime('fan');
+            this.intervals.fanCircStarterInterval = setTimeout(() => this.fanCircStarter(), (hvac.fanModes.circMode.inTime));
+            this.intervals.fanCircWorkerInterval = setTimeout(() => this.fanCircWorker(), hvac.fanModes.circMode.inTime-hvac.fanModes.circMode.onTime);
+        } catch (err) {this.errorHandler(err, "fanCircStarter");}
     }
     fanCircWorker() {
-        //implement fan circ mode here, 
-        //go from circOn to auto and back.
-        let currentTime = this.currentMachineRunTime('fan');
-        let delta = currentTime-this.fanCircWorkerTime;
-        let needed = hvac.fanModes.circMode.onTime-delta;
-        console.log("fanCircWorker d n", delta, needed);
-        if (delta > hvac.fanModes.circMode.onTime) return;
-        this.setFanMode('CircOn');
-        this.intervals.fanCircWorkerTimeout = setTimeout(() => this.setFanMode('Auto'), needed);
+        try {
+            //implement fan circ mode here, 
+            //go from circOn to auto and back.
+            let currentTime = this.currentMachineRunTime('fan');
+            let delta = currentTime-this.fanCircWorkerTime;
+            let needed = hvac.fanModes.circMode.onTime-delta;
+            console.log("fanCircWorker d n", delta, needed);
+            if (delta > hvac.fanModes.circMode.onTime) return;
+            this.setFanMode('CircOn');
+            this.intervals.fanCircWorkerTimeout = setTimeout(() => this.setFanMode('Auto'), needed);
+        } catch (err) {this.errorHandler(err, "fanCircWorker");}
     }
     fanCircCancel() {
-        if (this.intervals.fanCircStarterInterval) clearInterval(this.intervals.fanCircStarterInterval);
-        if (this.intervals.fanCircWorkerInterval) clearInterval(this.intervals.fanCircWorkerInterval);
-        if (this.intervals.fanCircWorkerTimeout) clearInterval(this.intervals.fanCircWorkerTimeout);
+        try {
+            if (this.intervals.fanCircStarterInterval) clearInterval(this.intervals.fanCircStarterInterval);
+            if (this.intervals.fanCircWorkerInterval) clearInterval(this.intervals.fanCircWorkerInterval);
+            if (this.intervals.fanCircWorkerTimeout) clearInterval(this.intervals.fanCircWorkerTimeout);
+        } catch (err) {this.errorHandler(err, "fanCircCancel");}
     }
     currentMachineRunTime(machine){
-        if (this.machines[machine].state === 'idle') {
-            return this.machines[machine].data.accumulators.run;
-        }
-        let time = this.machines[machine].data.accumulators.run;
-        let current = Date.now()-this.machines[machine].data.timers.run;
-        return time + current;
+        try {
+            if (this.machines[machine].state === 'idle') {
+                return this.machines[machine].data.accumulators.run;
+            }
+            let time = this.machines[machine].data.accumulators.run;
+            let current = Date.now()-this.machines[machine].data.timers.run;
+            return time + current;
+        } catch (err) {this.errorHandler(err, "currentMachineRunTime");}
     }
     setUserFanMode(mode){
-        console.log(`HvacLogic setUserFanMode ${mode}`);
-        if (!hvac.userModes.userFanModesNames.includes(mode)) throw new Error('setFanMode Unknown mode');
-        if (this.userFanMode === mode) return;
-        this.userFanMode = mode;
-        client.publish(baseTopic + "userFanMode", this.userFanMode);
-        if (mode === 'Circulate') {
-            this.fanCircStarter();
-            return;
-        }
-        this.fanCircCancel();
-        this.setFanMode(mode);
+        try {
+            console.log(`HvacLogic setUserFanMode ${mode}`);
+            if (!hvac.userModes.userFanModesNames.includes(mode)) throw new Error('setFanMode Unknown mode');
+            if (this.userFanMode === mode) return;
+            this.userFanMode = mode;
+            client.publish(baseTopic + "userFanMode", this.userFanMode);
+            if (mode === 'Circulate') {
+                this.fanCircStarter();
+                return;
+            }
+            this.fanCircCancel();
+            this.setFanMode(mode);
+        } catch (err) {this.errorHandler(err, "setUserFanMode");}
     }
     resend() {
-        //send all modes/states
-        for (let i in this.sensors) {
-            this.sensors[i].resend();
-        }
-        for (let i in this.machines) {
-            this.machines[i].resend();
-        }
-
-        client.publish(baseTopic + "mode", this.mode);
-        client.publish(baseTopic + "fanMode", this.fanMode);
-        client.publish(baseTopic + "userMode", this.userMode);
-        client.publish(baseTopic + "userFanMode", this.userFanMode);
-        client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
+        try {
+            //send all modes/states
+            for (let i in this.sensors) {
+                this.sensors[i].resend();
+            }
+            for (let i in this.machines) {
+                this.machines[i].resend();
+            }
+    
+            client.publish(baseTopic + "mode", this.mode);
+            client.publish(baseTopic + "fanMode", this.fanMode);
+            client.publish(baseTopic + "userMode", this.userMode);
+            client.publish(baseTopic + "userFanMode", this.userFanMode);
+            client.publish(baseTopic + "setpoint", hvac.setpoints.auto.toString());
+            globalStatus.send();
+            console.log("--------------------- Resend request sent -----------------");
+            //client.publish('home/pi64', 'ok');
+        } catch (err) {this.errorHandler(err, "resend");}
     }
 }
 
