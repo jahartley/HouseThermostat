@@ -5,6 +5,7 @@ const pigpio = require('pigpio');
 const EventEmitter = require('node:events');
 const dataBus = new EventEmitter();
 
+
 const globalStatus = {
     system: 'startup',
     set(value) {
