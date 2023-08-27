@@ -24,12 +24,14 @@ class Bme extends Sensor {
         if (this.interval) clearInterval(this.interval);
         console.log(`BME ${this.data.name} shutdown`);
     }
-    async restart() {
+    async restart() {        
+        if (super.restart()) return;
         try {
             this.shutDown();
             await this.bmeObj.reset();
             await this.init();
         } catch (err) {this.errorHandler(err, "restart");}
+        this.restartComplete();
     }
     dataStoreCheck(property) {
         super.dataStoreCheck(property);

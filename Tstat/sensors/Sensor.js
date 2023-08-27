@@ -6,7 +6,8 @@ const sensorDefaults = {
     dataRate: 10000,
     ema: 60000,
     publish: 0.2,
-    mqttEma: false
+    mqttEma: true,
+    restartInProgress: false
 };
 
 class Sensor {
@@ -23,6 +24,12 @@ class Sensor {
     }
     restart() {
         console.log(`${this.data.name} generic restart`);
+        if (this.restartInProgress) return true;
+        this.restartInProgress = true;
+        return false;
+    }
+    restartComplete() {
+        this.restartInProgress = false;
     }
     errorHandler(err, where = 'unknown') {
         console.log(`${this.data.name} Error Handler fault at ${where} on ${new Date()}`); 

@@ -25,8 +25,10 @@ class DsTs extends Sensor {
         console.log(`${this.type} ${this.data.name} shutdown`);
     }
     restart() {
+        if (super.restart()) return;
         this.shutDown();
         this.init();
+        this.restartComplete();
     }
     async readTemps() {
         try {
