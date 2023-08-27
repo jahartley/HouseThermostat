@@ -16,17 +16,20 @@ class DsTs extends Sensor {
             parts.pop();
             this.sensors = parts;
             if (this.sensors.length === 0) throw new Error("No sensors found");
-            this.interval = setInterval(() => {this.readTemps();}, this.data.rate);
+            this.intervals.read = setInterval(() => this.readTemps(), this.data.rate);
             console.log(`DsTs found ${this.sensors.length} devices. Init Complete`);
         } catch (err) {this.errorHandler(err, `${this.type} init`);}
     }
+    restartShutDown() {
+        if (this.intervals.read) clearInterval(this.intervals.read);
+    }
     shutDown() {
-        if (this.interval) clearInterval(this.interval);
+        super.shutDown();
         console.log(`${this.type} ${this.data.name} shutdown`);
     }
     restart() {
         if (super.restart()) return;
-        this.shutDown();
+        this.restartShutDown();
         this.init();
         this.restartComplete();
     }

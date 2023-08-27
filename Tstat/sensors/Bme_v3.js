@@ -17,17 +17,22 @@ class Bme extends Sensor {
         try {
             this.bmeObj = new BME280(this.data.bmeOptions);
             await this.bmeObj.init();
-            this.interval = setInterval(async () => {this.read()} ,this.data.rate);
+            this.intervals.read = setInterval(async () => {this.read()} ,this.data.rate);
         } catch (err) {this.errorHandler(err, "init");}
     }
+    restartShutdown() {
+        if (this.intervals.read) clearInterval(this.intervals.read);
+        console.log(`BME ${this.data.name} shutdown`);
+    }
     shutDown() {
+        super.shutDown();
         if (this.interval) clearInterval(this.interval);
         console.log(`BME ${this.data.name} shutdown`);
     }
     async restart() {        
         if (super.restart()) return;
         try {
-            this.shutDown();
+            this.restartShutdown();
             await this.bmeObj.reset();
             await this.init();
         } catch (err) {this.errorHandler(err, "restart");}

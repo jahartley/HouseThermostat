@@ -17,16 +17,20 @@ class Serial extends Sensor {
             console.log("Serial initialized");
         } catch (err) {this.errorHandler(err, `init`);}
     }
-    shutDown() {
+    restartShutDown() {
         try {
             this.parser.removeListener('data', (data) => this.parseData(data));
             this.port.close();
             console.log("Serial shutdown");
         } catch (err) {this.errorHandler(err, `close`);}
     }
+    shutDown() {
+        super.shutDown();
+        this.restartShutDown();
+    }
     restart() {
         if (super.restart()) return;
-        this.shutDown();
+        this.restartShutDown();
         this.init();
         this.restartComplete();
     }

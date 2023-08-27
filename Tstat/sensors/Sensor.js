@@ -6,13 +6,15 @@ const sensorDefaults = {
     dataRate: 10000,
     ema: 60000,
     publish: 0.2,
-    mqttEma: true,
-    restartInProgress: false
+    mqttEma: true
 };
 
 class Sensor {
     constructor(opts) {
         this.data = opts;
+        this.restartInProgress= false;
+        this.intervals = {};
+        this.intervals.restartInterval = null;
         if (this.data?.name === undefined) throw new Error("Sensor constructor no name");
         if (this.data?.rate === undefined) this.data.rate = sensorDefaults.dataRate;
         if (this.data?.ema === undefined) this.data.ema = sensorDefaults.ema
@@ -24,11 +26,15 @@ class Sensor {
     }
     restart() {
         console.log(`${this.data.name} generic restart`);
-        if (this.restartInProgress) return true;
+        if (this.restartInProgress) {
+            this.intervals.restartInterval = setTimeout(() => this.restart(),60000);
+            return true;
+        }
         this.restartInProgress = true;
         return false;
     }
     restartComplete() {
+        clearTimeout(this.intervals.restartInterval);
         this.restartInProgress = false;
     }
     errorHandler(err, where = 'unknown') {
@@ -88,6 +94,9 @@ class Sensor {
     }
     shutDown(){
         console.log(`${this.data.name} generic shutdown`);
+        for (let interval in this.intervals) {
+            if (this.intervals[interval]) clearInterval(this.intervals[interval]);
+        }
     }
 }
 
