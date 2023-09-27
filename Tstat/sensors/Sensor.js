@@ -1,6 +1,7 @@
 
 const {client, dataBus} = require("../global.js");
 const Ema = require('./Ema.js');
+const MedianFilter = require("./MedianFilter.js");
 
 const sensorDefaults = {
     dataRate: 10000,
@@ -49,7 +50,8 @@ class Sensor {
                 valueOld: 0,
                 emaPeriod: this.data.ema,
                 ema: new Ema(this.data.name, this.data.ema),
-                publish: this.data.publish
+                publish: this.data.publish,
+                median: new MedianFilter(this.data.name)
             };
             return true;
         }
@@ -58,21 +60,26 @@ class Sensor {
         if (this.data.dataStore[property]?.emaPeriod === undefined) this.data.dataStore[property].emaPeriod = this.data.ema;
         if (this.data.dataStore[property]?.ema === undefined) this.data.dataStore[property].ema = new Ema(this.data.name, this.data.dataStore[property].emaPeriod);
         if (this.data.dataStore[property]?.publish === undefined) this.data.dataStore[property].publish = this.data.publish;
+        if (this.data.dataStore[property]?.median === undefined) this.data.dataStore[property].med = new MedianFilter(this.data.name, this.data.dataStore[property].emaPeriod);
         return true;
     }
     save(property, value) {
         this.dataStoreCheck(property);
-        this.data.dataStore[property].value = value;
-        //console.log(`${this.data.name}/${property}`, value);
-        dataBus.emit(`${this.data.name}/${property}`, value);
+        let ema = this.data.dataStore[property].ema.pushValue(value);
+        dataBus.emit(`${this.data.name}/${property}/ema`, ema);
+        let median = this.data.dataStore[property].median.pushValue(value);
+        if (median == null) {
+            this.data.dataStore[property].value = value;
+        } else {
+            this.data.dataStore[property].value = median;
+        }
+        dataBus.emit(`${this.data.name}/${property}`, this.data.dataStore[property].value);
         this.publish(property);
     }
     publish(property, now=false) {
         this.dataStoreCheck(property);
         let { value, valueOld, publish } = this.data.dataStore[property];
-        let ema = this.data.dataStore[property].ema.pushValue(value);
-
-        dataBus.emit(`${this.data.name}/${property}/ema`, ema);
+        
         if (sensorDefaults.mqttEma) client.publish(`home/hvac/${this.data.name}/${property}/ema`, JSON.stringify({ema: ema, value: value}));
         if (now) {
             client.publish(`home/hvac/${this.data.name}/${property}`, value.toString());
