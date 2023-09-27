@@ -80,7 +80,7 @@ class Sensor {
         this.dataStoreCheck(property);
         let { value, valueOld, publish } = this.data.dataStore[property];
         
-        if (sensorDefaults.mqttEma) client.publish(`home/hvac/${this.data.name}/${property}/ema`, JSON.stringify({ema: ema, value: value}));
+        if (sensorDefaults.mqttEma) client.publish(`home/hvac/${this.data.name}/${property}/ema`, JSON.stringify(this.data.dataStore[property].ema.getValue()));
         if (now) {
             client.publish(`home/hvac/${this.data.name}/${property}`, value.toString());
             this.data.dataStore[property].valueOld = value;
