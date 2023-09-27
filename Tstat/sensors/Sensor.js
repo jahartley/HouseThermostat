@@ -60,7 +60,7 @@ class Sensor {
         if (this.data.dataStore[property]?.emaPeriod === undefined) this.data.dataStore[property].emaPeriod = this.data.ema;
         if (this.data.dataStore[property]?.ema === undefined) this.data.dataStore[property].ema = new Ema(this.data.name, this.data.dataStore[property].emaPeriod);
         if (this.data.dataStore[property]?.publish === undefined) this.data.dataStore[property].publish = this.data.publish;
-        if (this.data.dataStore[property]?.median === undefined) this.data.dataStore[property].med = new MedianFilter(this.data.name, this.data.dataStore[property].emaPeriod);
+        if (this.data.dataStore[property]?.median === undefined) this.data.dataStore[property].median = new MedianFilter(this.data.name);
         return true;
     }
     save(property, value) {
