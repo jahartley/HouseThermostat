@@ -84,11 +84,13 @@ class Sensor {
         if (now) {
             client.publish(`home/hvac/${this.data.name}/${property}`, value.toString());
             this.data.dataStore[property].valueOld = value;
+            dataBus.emit(`${this.data.name}/${property}/pub`, this.data.dataStore[property].value);
             return;
         }
         if (Math.abs(value - valueOld) > publish) {
             client.publish(`home/hvac/${this.data.name}/${property}`, value.toString());
             this.data.dataStore[property].valueOld = value;
+            dataBus.emit(`${this.data.name}/${property}/pub`, this.data.dataStore[property].value);
         }
     }
     resend() {

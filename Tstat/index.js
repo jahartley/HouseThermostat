@@ -21,6 +21,8 @@ console.log("-------------------------------------------------");
 const {client, pigpio, dataBus, globalStatus} = require("./global.js");
 const hvacLogic = require("./hvacLogic.js");
 const ductPressureMonitor = require("./auxFunctions/ductPressureMonitor.js");
+const PsychroCalc = require("./auxFunctions/psychrometricCalc.js");
+
 
 globalStatus.set('INIT');
 
@@ -35,6 +37,7 @@ try {
 
 const hvac1 = new hvacLogic();
 const dpm = new ductPressureMonitor();
+const hallwayPsy = new PsychroCalc("Hallway");
 
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
@@ -127,6 +130,16 @@ let lastTime = Math.floor(Date.now() / 1000);
 
 dataBus.on("Hallway/temperature/ema", (temp) => {
     lastTime = Math.floor(Date.now() / 1000);
+});
+
+dataBus.on("Hallway/temperature/pub", (value) => {
+    hallwayPsy.setTempF(value);
+});
+dataBus.on("Hallway/humidity/pub", (value) => {
+    hallwayPsy.setHumidityRH(value);
+});
+dataBus.on("Hallway/pressure/pub", (value) => {
+    hallwayPsy.setPressuremBar(value);
 });
 
 dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {
