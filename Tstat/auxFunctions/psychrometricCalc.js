@@ -166,7 +166,7 @@ class PsychroCalc {
             //console.log(propsArray[i]);
             //console.log(this[propsArray[i]]);
             if (propsArray[i] == 'name') continue;
-            client.publish(`home/hvac/${"pychrometric_"+this.name}/${propsArray[i]}`, JSON.stringify(this[propsArray[i]]));
+            client.publish(`home/hvac/${"psychrometric_"+this.name}/${propsArray[i]}`, JSON.stringify(this[propsArray[i]]));
         }
         
     }

@@ -38,6 +38,7 @@ try {
 const hvac1 = new hvacLogic();
 const dpm = new ductPressureMonitor();
 const hallwayPsy = new PsychroCalc("Hallway");
+const outsidePsy = new PsychroCalc("Outside");
 
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
@@ -99,6 +100,7 @@ client.on('connect', () => {
     client.subscribe('home/hvac/control/userFanMode');
     client.subscribe('home/hvac/control/userMode');
     client.subscribe('home/hvac/control/setpoint');
+    client.subscribe('rtl_433/Acurite-5n1/msg56');
 })
 
 client.on('message', function(topic, message) {
@@ -114,7 +116,11 @@ client.on('message', function(topic, message) {
     if (topic.toString() == 'home/hvac/control/setpoint') {
         hvac1.setSetPointAuto(parseFloat(message));
     }
-
+    if (topic.toString() == 'rtl_433/Acurite-5n1/msg56') {
+        let msg = JSON.parse(message);
+        if (msg?.temperature_F != undefined) outsidePsy.setTempF(msg.temperature_F);
+        if (msg?.humidity != undefined) outsidePsy.setHumidityRH(msg.humidity);
+    }
 });
 
 
@@ -140,6 +146,7 @@ dataBus.on("Hallway/humidity/pub", (value) => {
 });
 dataBus.on("Hallway/pressure/pub", (value) => {
     hallwayPsy.setPressuremBar(value);
+    outsidePsy.setPressuremBar(value);
 });
 
 dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {
