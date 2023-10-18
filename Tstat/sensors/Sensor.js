@@ -71,7 +71,7 @@ class Sensor {
         if (median == null) {
             this.data.dataStore[property].value = value;
         } else {
-            this.data.dataStore[property].value = median;
+            this.data.dataStore[property].value = median.toFixed(2);
         }
         dataBus.emit(`${this.data.name}/${property}`, this.data.dataStore[property].value);
         this.publish(property);

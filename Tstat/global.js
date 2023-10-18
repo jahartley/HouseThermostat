@@ -31,7 +31,7 @@ const hvac = {};
 // delay: mandatory delay
 
 hvac.startup = {
-    userMode: 'Cool',
+    userMode: 'Auto',
     userFanMode: 'Auto'
 };
 
@@ -109,7 +109,7 @@ hvac.machines = {
                             func: 'delay',
                             options: {
                                 timer: 'idle',
-                                minTime: 10000
+                                minTime: 20000
                             }
                         },
                         1: {
@@ -173,6 +173,13 @@ hvac.machines = {
                         },
                         1: {
                             func: 'stop'
+                        },
+                        2: { //sets minimum off time
+                            func: 'delay',
+                            options: {
+                                timer: 'idle',
+                                minTime: 120000
+                            }
                         }
                     },
                     success: 'idle',
@@ -226,8 +233,15 @@ hvac.machines = {
                                 minTime: 120000
                             }
                         },
-                        0: {
+                        1: {
                             func: 'stop'
+                        },
+                        2: { //sets minimum off time
+                            func: 'delay',
+                            options: {
+                                timer: 'idle',
+                                minTime: 120000
+                            }
                         }
                     },
                     success: 'idle',
