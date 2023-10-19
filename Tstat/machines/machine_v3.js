@@ -75,13 +75,13 @@ class Machine {
         
         for (let actions in this.data.states[this.state][req].actions) {
             if (!this[this.data.states[this.state][req].actions[actions].func](this.data.states[this.state][req].actions[actions].options)) {
-                //console.log(`${this.data.name} poll request ${req} blocked in action ${actions} FAIL`);
+                console.log(`${this.data.name} poll request ${req} blocked in action ${actions} FAIL`);
                 return false;
             }
         }
         this.state = this.data.states[this.state][req].success;
         this.eventEmit(this.state);
-        //console.log(`${this.data.name} poll request ${req} Moved to new state ${this.state} SUCCESS`);
+        console.log(`${this.data.name} poll request ${req} Moved to new state ${this.state} SUCCESS`);
         return true;
     }
     machineInit() {
