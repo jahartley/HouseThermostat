@@ -153,7 +153,14 @@ hvac.machines = {
             idle: {
                 run: {
                     actions: {
-                        0: {
+                        0: { //sets minimum off time
+                            func: 'delay',
+                            options: {
+                                timer: 'idle',
+                                minTime: 240000
+                            }
+                        },
+                        1: {
                             func: 'start'
                         }
                     },
@@ -173,13 +180,6 @@ hvac.machines = {
                         },
                         1: {
                             func: 'stop'
-                        },
-                        2: { //sets minimum off time
-                            func: 'delay',
-                            options: {
-                                timer: 'idle',
-                                minTime: 120000
-                            }
                         }
                     },
                     success: 'idle',
@@ -212,7 +212,7 @@ hvac.machines = {
                             func: 'delay',
                             options: {
                                 timer: 'idle',
-                                minTime: 120000
+                                minTime: 240000
                             }
                         },
                         1: {
@@ -235,13 +235,6 @@ hvac.machines = {
                         },
                         1: {
                             func: 'stop'
-                        },
-                        2: { //sets minimum off time
-                            func: 'delay',
-                            options: {
-                                timer: 'idle',
-                                minTime: 120000
-                            }
                         }
                     },
                     success: 'idle',
