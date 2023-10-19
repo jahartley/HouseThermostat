@@ -39,6 +39,8 @@ const hvac1 = new hvacLogic();
 const dpm = new ductPressureMonitor();
 const hallwayPsy = new PsychroCalc("Hallway");
 const outsidePsy = new PsychroCalc("Outside");
+const DuctBeforeHVACPsy = new PsychroCalc("DuctBeforeHVAC");
+const DuctAfterHVACPsy = new PsychroCalc("DuctAfterHVACPsy");
 
 const gracefulShutdown = () => {
     console.log(`Shutting down.`);
@@ -147,6 +149,37 @@ dataBus.on("Hallway/humidity/pub", (value) => {
 dataBus.on("Hallway/pressure/pub", (value) => {
     hallwayPsy.setPressuremBar(value);
     outsidePsy.setPressuremBar(value);
+    if (hvac1.machines.cool.isRunning() && hvac1.machines.cool.hasRunFor(30000) ||
+    hvac1.machines.heat.isRunning() && hvac1.machines.heat.hasRunFor(60000)) {
+        DuctBeforeHVACPsy.setPressuremBar(value);
+        DuctAfterHVACPsy.setPressuremBar(value);
+    }
+});
+
+dataBus.on("DuctBeforeHVAC/temperature/pub", (value) => {
+    if (hvac1.machines.cool.isRunning() && hvac1.machines.cool.hasRunFor(30000) ||
+    hvac1.machines.heat.isRunning() && hvac1.machines.heat.hasRunFor(60000)) {
+        DuctBeforeHVACPsy.setTempF(value);
+    }
+});
+dataBus.on("DuctBeforeHVAC/humidity/pub", (value) => {
+    if (hvac1.machines.cool.isRunning() && hvac1.machines.cool.hasRunFor(30000) ||
+    hvac1.machines.heat.isRunning() && hvac1.machines.heat.hasRunFor(60000)) {
+        DuctBeforeHVACPsy.setHumidityRH(value);
+    }
+});
+
+dataBus.on("DuctAfterHVAC/temperature/pub", (value) => {
+    if (hvac1.machines.cool.isRunning() && hvac1.machines.cool.hasRunFor(30000) ||
+    hvac1.machines.heat.isRunning() && hvac1.machines.heat.hasRunFor(60000)) {
+        DuctAfterHVACPsy.setTempF(value);
+    }
+});
+dataBus.on("DuctAfterHVAC/humidity/pub", (value) => {
+    if (hvac1.machines.cool.isRunning() && hvac1.machines.cool.hasRunFor(30000) ||
+    hvac1.machines.heat.isRunning() && hvac1.machines.heat.hasRunFor(60000)) {
+        DuctAfterHVACPsy.setHumidityRH(value);
+    }
 });
 
 dataBus.on("DuctBeforeHVAC/temperature/ema", (temp) => {

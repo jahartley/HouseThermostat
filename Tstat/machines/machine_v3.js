@@ -121,6 +121,14 @@ class Machine {
         if (this?.state === undefined) return;
         client.publish(`home/hvac/machines/${this.data.name}`, this.state);
     }
+    isRunning(){
+        if (this?.state != undefined && this.state === 'run') return true;
+        return false;
+    }
+    hasRunFor(time) {
+        if (this?.state != undefined && this.state === 'run' && Date.now()-this.data.timers.run > time) return true;
+        return false;
+    }
 }
 
 
