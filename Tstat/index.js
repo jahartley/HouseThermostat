@@ -1,6 +1,5 @@
 
 
-
 /*
     events start stop.
 
@@ -13,8 +12,6 @@
         Make Schedules...
         Make Setpoints...
 */
-
-
 
 
 
